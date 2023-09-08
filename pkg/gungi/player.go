@@ -1,5 +1,13 @@
 package gungi
 
+import "fmt"
+
+var (
+	_ Player = (*HumanPlayer)(nil)
+
+	ErrNilPlayer = fmt.Errorf("nil player")
+)
+
 // Player represents a player in the game.
 type Player interface {
 	// Pieces returns the pieces that the player has on the board.
@@ -27,8 +35,10 @@ func (p *player) Hand() []Piece {
 	return p.hand
 }
 
-func NewHumanPlayer() (Player, error) {
-	return &HumanPlayer{}, nil
+func NewHumanPlayer() (p *HumanPlayer, err error) {
+	// TODO
+	p = &HumanPlayer{}
+	return
 }
 
 func (p *HumanPlayer) DoTurn() {
