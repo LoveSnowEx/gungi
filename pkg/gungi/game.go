@@ -1,6 +1,6 @@
 package gungi
 
-const playerCount = 2
+const PlayerCount = 2
 
 var (
 	_ Game = (*game)(nil)
@@ -13,7 +13,7 @@ type Game interface {
 	// Join adds a player to the game.
 	Join(Player, Color) error
 	// Players returns the players of the game.
-	Players() [playerCount]Player
+	Players() [PlayerCount]Player
 	// CurrentPlayer returns the player whose turn it is.
 	CurrentPlayer() Player
 	// Start starts the game.
@@ -25,7 +25,7 @@ type Game interface {
 }
 
 type game struct {
-	players          [playerCount]Player
+	players          [PlayerCount]Player
 	currentPlayerIdx int
 	board            Board
 }
@@ -43,7 +43,7 @@ func (g *game) Join(p Player, c Color) error {
 	return nil
 }
 
-func (g *game) Players() [playerCount]Player {
+func (g *game) Players() [PlayerCount]Player {
 	return g.players
 }
 
