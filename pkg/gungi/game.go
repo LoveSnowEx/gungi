@@ -112,5 +112,5 @@ func (g *game) Apply(a Action) error {
 }
 
 func (g *game) endTurn() {
-	g.currentPlayerIdx = (g.currentPlayerIdx + 1) % len(g.players)
+	g.currentPlayerIdx = (g.currentPlayerIdx + 1) % PlayerCount
 }
