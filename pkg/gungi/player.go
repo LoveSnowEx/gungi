@@ -13,8 +13,8 @@ type player struct {
 	hand   []Piece
 }
 
-func NewPlayer() Player {
-	return &player{}
+type humanPlayer struct {
+	player
 }
 
 func (p *player) Pieces() []Piece {
@@ -23,4 +23,8 @@ func (p *player) Pieces() []Piece {
 
 func (p *player) Hand() []Piece {
 	return p.hand
+}
+
+func NewHumanPlayer() (Player, error) {
+	return &humanPlayer{}, nil
 }
