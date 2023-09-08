@@ -6,6 +6,8 @@ const playerCount = 2
 type Game interface {
 	// Board returns the board of the game.
 	Board() Board
+	// Join adds a player to the game.
+	Join(Player, Color) error
 	// Players returns the players of the game.
 	Players() [playerCount]Player
 	// CurrentPlayer returns the player whose turn it is.
@@ -30,6 +32,11 @@ func NewGame() (Game, error) {
 
 func (g *game) Board() Board {
 	return g.board
+}
+
+func (g *game) Join(p Player, c Color) error {
+	g.players[c] = p
+	return nil
 }
 
 func (g *game) Players() [playerCount]Player {
