@@ -1,9 +1,23 @@
 package gungi
 
+import (
+	"fmt"
+	"sync"
+)
+
+type State int
+
+const (
+	STATE_NOT_STARTED State = iota
+	STATE_IN_PROGRESS
+	STATE_ENDED
+)
+
 const PlayerCount = 2
 
 var (
-	_ Game = (*game)(nil)
+	_                   Game = (*game)(nil)
+	ErrNotEnoughPlayers      = fmt.Errorf("not enough players")
 )
 
 // Game represents a game of Gungi.
@@ -17,7 +31,9 @@ type Game interface {
 	// CurrentPlayer returns the player whose turn it is.
 	CurrentPlayer() Player
 	// Start starts the game.
-	Start()
+	Start() error
+	// State returns the state of the game.
+	State() State
 	// Actions returns the actions that the current player can take.
 	Actions() []Action
 	// Apply applies the action to the game.
@@ -28,6 +44,8 @@ type game struct {
 	players          [PlayerCount]Player
 	currentPlayerIdx int
 	board            Board
+	state            State
+	mu               sync.RWMutex
 }
 
 func NewGame() Game {
@@ -49,8 +67,20 @@ func (g *game) Players() [PlayerCount]Player {
 	return g.players
 }
 
-func (g *game) Start() {
-	g.board = NewBoard()
+func (g *game) Start() (err error) {
+	if g.players[WHITE] == nil || g.players[BLACK] == nil {
+		return ErrNotEnoughPlayers
+	}
+	g.mu.Lock()
+	g.state = STATE_IN_PROGRESS
+	g.mu.Unlock()
+	return
+}
+
+func (g *game) State() State {
+	g.mu.RLock()
+	defer g.mu.RUnlock()
+	return g.state
 }
 
 func (g *game) CurrentPlayer() Player {
