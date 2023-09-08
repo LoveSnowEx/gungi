@@ -33,6 +33,7 @@ var (
 type Piece interface {
 	Owner() Player
 	Type() PieceType
+	Color() Color
 	Position() *Position
 	CanMoveTo(Position) bool
 }
@@ -40,6 +41,7 @@ type Piece interface {
 type basePiece struct {
 	owner    Player
 	type_    PieceType
+	color    Color
 	position *Position
 	board    Board
 }
@@ -68,6 +70,10 @@ func (p basePiece) Type() PieceType {
 
 func (p basePiece) Owner() Player {
 	return p.owner
+}
+
+func (p basePiece) Color() Color {
+	return p.color
 }
 
 func (p basePiece) Position() *Position {
