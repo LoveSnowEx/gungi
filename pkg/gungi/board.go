@@ -1,6 +1,14 @@
 package gungi
 
+import "fmt"
+
 const maxStackHeight = 3
+
+var (
+	_ Board = (*board)(nil)
+
+	ErrNilBoard = fmt.Errorf("nil board")
+)
 
 type Board interface {
 	// Get returns the piece at the given position.
