@@ -3,7 +3,6 @@ package gungi
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,25 +19,25 @@ func TestNewGame(t *testing.T) {
 }
 
 func TestGameBoard(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	game := newTestGame(t)
-	a.NotNil(game.Board())
+	r.NotNil(game.Board())
 }
 
 func TestNoGamePlayers(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	game := newTestGame(t)
-	a.Empty(game.Players())
-	a.Nil(game.CurrentPlayer())
+	r.Empty(game.Players())
+	r.Nil(game.CurrentPlayer())
 }
 
 func TestGameJoin(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	game := newTestGame(t)
 	p1 := newTestHumanPlayer(t)
 	p2 := newTestHumanPlayer(t)
-	a.NoError(game.Join(p1, WHITE))
-	a.NoError(game.Join(p2, BLACK))
-	a.Equal([playerCount]Player{p1, p2}, game.Players())
-	a.Equal(p1, game.CurrentPlayer())
+	r.NoError(game.Join(p1, WHITE))
+	r.NoError(game.Join(p2, BLACK))
+	r.Equal([playerCount]Player{p1, p2}, game.Players())
+	r.Equal(p1, game.CurrentPlayer())
 }
