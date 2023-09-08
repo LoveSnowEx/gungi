@@ -25,6 +25,7 @@ const (
 var (
 	_                   Game = (*game)(nil)
 	ErrNotEnoughPlayers      = fmt.Errorf("not enough players")
+	ErrInvalidColor          = fmt.Errorf("invalid color")
 )
 
 // Game represents a game of Gungi.
@@ -55,6 +56,11 @@ type game struct {
 	mu               sync.RWMutex
 }
 
+func (c Color) Valid() bool {
+	val := int(c)
+	return val >= 0 && val < PlayerCount
+}
+
 func NewGame() Game {
 	return &game{
 		board: NewBoard(),
@@ -66,8 +72,8 @@ func (g *game) Board() Board {
 }
 
 func (g *game) Join(p Player, c Color) error {
-	if c < 0 || c >= PlayerCount {
-		return fmt.Errorf("invalid color %d", c)
+	if !c.Valid() {
+		return ErrInvalidColor
 	}
 	g.players[c] = p
 	return nil
