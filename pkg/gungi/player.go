@@ -6,6 +6,8 @@ type Player interface {
 	Pieces() []Piece
 	// Hand returns the pieces that the player has in their hand.
 	Hand() []Piece
+	// DoTurn performs the player's turn.
+	DoTurn()
 }
 
 type player struct {
@@ -13,7 +15,7 @@ type player struct {
 	hand   []Piece
 }
 
-type humanPlayer struct {
+type HumanPlayer struct {
 	player
 }
 
@@ -26,5 +28,9 @@ func (p *player) Hand() []Piece {
 }
 
 func NewHumanPlayer() (Player, error) {
-	return &humanPlayer{}, nil
+	return &HumanPlayer{}, nil
+}
+
+func (p *HumanPlayer) DoTurn() {
+	// TODO
 }
