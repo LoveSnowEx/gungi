@@ -11,6 +11,14 @@ type Position struct {
 	Z int
 }
 
+func NewPosition2D(x, y int) Position2D {
+	return Position2D{image.Point{x, y}}
+}
+
+func NewPosition(x, y, z int) Position {
+	return Position{NewPosition2D(x, y), z}
+}
+
 func (p Position2D) Get() (x, y int) {
 	return p.X, p.Y
 }
