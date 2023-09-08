@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func newTestHumanPlayer(t testing.TB) Player {
+func newTestHumanPlayer(t *testing.T) Player {
 	r := require.New(t)
 	player, err := NewHumanPlayer()
 	r.NoError(err)
