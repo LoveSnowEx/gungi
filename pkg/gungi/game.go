@@ -5,6 +5,15 @@ import (
 	"sync"
 )
 
+// Color is the color of a player.
+type Color int
+
+const (
+	WHITE       Color = iota // First player
+	BLACK                    // Second player
+	PlayerCount int   = iota // Number of players
+)
+
 type State int
 
 const (
@@ -12,8 +21,6 @@ const (
 	STATE_IN_PROGRESS
 	STATE_ENDED
 )
-
-const PlayerCount = 2
 
 var (
 	_                   Game = (*game)(nil)
@@ -59,6 +66,9 @@ func (g *game) Board() Board {
 }
 
 func (g *game) Join(p Player, c Color) error {
+	if c < 0 || c >= PlayerCount {
+		return fmt.Errorf("invalid color %d", c)
+	}
 	g.players[c] = p
 	return nil
 }

@@ -54,8 +54,8 @@ func TestGameJoin(t *testing.T) {
 
 	// Test that you can't join a game with wrong color.
 	p3 := newTestHumanPlayer(t)
-	r.Error(game.Join(p3, -1))
-	r.Error(game.Join(p3, PlayerCount))
+	r.Error(game.Join(p3, Color(-1)))
+	r.Error(game.Join(p3, Color(PlayerCount)))
 
 	// Test that you can't join a game that has already started.
 	stratedCh := make(chan struct{})
