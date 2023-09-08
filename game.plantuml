@@ -1,0 +1,122 @@
+@startuml
+namespace gungi {
+    interface Action  {
+        + Apply( *Game) error
+
+    }
+    interface Board  {
+        + Get( Position) Piece
+        + Highest( Position2D) int
+
+    }
+    interface Game  {
+        + Board() Board
+        + Players() []Player
+        + CurrentPlayer() Player
+        + Start() 
+        + Actions() []Action
+        + Apply( Action) error
+
+    }
+    class MoveAction << (S,Aquamarine) >> {
+        + Piece Piece
+        + Position Position
+
+        + Apply(g *Game) error
+
+    }
+    interface Piece  {
+        + Owner() Player
+        + Type() PiceeType
+        + Position() *Position
+        + CanMoveTo( Position) bool
+
+    }
+    class PlaceAction << (S,Aquamarine) >> {
+        + Piece Piece
+        + Position Position2D
+
+        + Apply(g *Game) error
+
+    }
+    interface Player  {
+        + Pieces() []Piece
+        + Hand() []Piece
+
+    }
+    class Position << (S,Aquamarine) >> {
+        + Z int
+
+        + Get() (int, int, int)
+
+    }
+    class Position2D << (S,Aquamarine) >> {
+        + Get() (int, int)
+
+    }
+    class basePiece << (S,Aquamarine) >> {
+        - owner Player
+        - type_ PiceeType
+        - position *Position
+        - board board
+
+        + Type() PiceeType
+        + Owner() Player
+        + Position() *Position
+        + CanMoveTo(pos Position) bool
+
+    }
+    class board << (S,Aquamarine) >> {
+        - getStack(p Position2D) stack
+
+        + Get(p Position) Piece
+        + Highest(p Position2D) int
+
+    }
+    class game << (S,Aquamarine) >> {
+        - players []Player
+        - currentPlayerIdx int
+        - board Board
+
+        - endTurn() 
+
+        + Board() Board
+        + Players() []Player
+        + Start() 
+        + CurrentPlayer() Player
+        + Actions() []Action
+        + Apply(a Action) error
+
+    }
+    class gungi.Color << (T, #FF7700) >>  {
+    }
+    class gungi.PiceeType << (T, #FF7700) >>  {
+    }
+    class gungi.board << (T, #FF7700) >>  {
+    }
+    class gungi.stack << (T, #FF7700) >>  {
+    }
+    class player << (S,Aquamarine) >> {
+        - pieces []Piece
+        - hand []Piece
+
+        + Pieces() []Piece
+        + Hand() []Piece
+
+    }
+}
+"gungi.Position2D" *-- "gungi.Position"
+"image.Point" *-- "gungi.Position2D"
+
+"gungi.Action" <|-- "gungi.MoveAction"
+"gungi.Action" <|-- "gungi.PlaceAction"
+"gungi.Piece" <|-- "gungi.basePiece"
+"gungi.Board" <|-- "gungi.board"
+"gungi.Game" <|-- "gungi.game"
+"gungi.Player" <|-- "gungi.player"
+
+"__builtin__.int" #.. "gungi.Color"
+"__builtin__.int" #.. "gungi.PiceeType"
+"gungi.[]Piece" #.. "gungi.stack"
+"gungi.[][]stack" #.. "gungi.board"
+@enduml
