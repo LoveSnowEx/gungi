@@ -1,6 +1,9 @@
 package gungi
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 type PieceType int
 
@@ -19,6 +22,12 @@ const (
 	MUSKETEER                           // 筒
 	ARCHER                              // 弓
 	CAPTAIN                             // 謀
+	maxPieceType       int       = iota
+)
+
+var (
+	_                   Piece = (*basePiece)(nil)
+	ErrInvalidPieceType       = fmt.Errorf("invalid piece type")
 )
 
 type Piece interface {
@@ -32,16 +41,25 @@ type basePiece struct {
 	owner    Player
 	type_    PieceType
 	position *Position
-	board    board
+	board    Board
 }
 
-func newBasePiece(owner Player, type_ PieceType, position *Position, board board) basePiece {
-	return basePiece{
-		owner:    owner,
-		type_:    type_,
-		position: position,
-		board:    board,
+func (t PieceType) Valid() bool {
+	val := int(t)
+	return val >= 0 && val < maxPieceType
+}
+
+func newBasePiece(owner Player, type_ PieceType, board Board) (p *basePiece, err error) {
+	if !type_.Valid() {
+		err = ErrInvalidPieceType
+		return
 	}
+	p = &basePiece{
+		owner: owner,
+		type_: type_,
+		board: board,
+	}
+	return
 }
 
 func (p basePiece) Type() PieceType {
