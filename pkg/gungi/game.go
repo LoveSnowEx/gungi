@@ -24,8 +24,8 @@ type game struct {
 	board            Board
 }
 
-func NewGame() Game {
-	return &game{}
+func NewGame() (Game, error) {
+	return &game{}, nil
 }
 
 func (g *game) Board() Board {
