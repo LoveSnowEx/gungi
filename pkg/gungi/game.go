@@ -2,6 +2,10 @@ package gungi
 
 const playerCount = 2
 
+var (
+	_ Game = (*game)(nil)
+)
+
 // Game represents a game of Gungi.
 type Game interface {
 	// Board returns the board of the game.
