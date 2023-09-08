@@ -2,10 +2,10 @@ package gungi
 
 import "log"
 
-type PiceeType int
+type PieceType int
 
 const (
-	MARSHAL            PiceeType = iota // 帥
+	MARSHAL            PieceType = iota // 帥
 	GENERAL                             // 大
 	LIEUTENANT_GENERAL                  // 中
 	MAJOR_GENERAL                       // 小
@@ -23,19 +23,19 @@ const (
 
 type Piece interface {
 	Owner() Player
-	Type() PiceeType
+	Type() PieceType
 	Position() *Position
 	CanMoveTo(Position) bool
 }
 
 type basePiece struct {
 	owner    Player
-	type_    PiceeType
+	type_    PieceType
 	position *Position
 	board    board
 }
 
-func newBasePiece(owner Player, type_ PiceeType, position *Position, board board) basePiece {
+func newBasePiece(owner Player, type_ PieceType, position *Position, board board) basePiece {
 	return basePiece{
 		owner:    owner,
 		type_:    type_,
@@ -44,7 +44,7 @@ func newBasePiece(owner Player, type_ PiceeType, position *Position, board board
 	}
 }
 
-func (p basePiece) Type() PiceeType {
+func (p basePiece) Type() PieceType {
 	return p.type_
 }
 
