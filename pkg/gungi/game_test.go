@@ -8,8 +8,7 @@ import (
 
 func newTestGame(t *testing.T) Game {
 	r := require.New(t)
-	game, err := NewGame()
-	r.NoError(err)
+	game := NewGame()
 	r.NotNil(game)
 	return game
 }
