@@ -1,10 +1,13 @@
 package gungi
 
+const playerCount = 2
+
+// Game represents a game of Gungi.
 type Game interface {
 	// Board returns the board of the game.
 	Board() Board
 	// Players returns the players of the game.
-	Players() []Player
+	Players() [playerCount]Player
 	// CurrentPlayer returns the player whose turn it is.
 	CurrentPlayer() Player
 	// Start starts the game.
@@ -16,7 +19,7 @@ type Game interface {
 }
 
 type game struct {
-	players          []Player
+	players          [playerCount]Player
 	currentPlayerIdx int
 	board            Board
 }
@@ -29,7 +32,7 @@ func (g *game) Board() Board {
 	return g.board
 }
 
-func (g *game) Players() []Player {
+func (g *game) Players() [playerCount]Player {
 	return g.players
 }
 
