@@ -46,19 +46,36 @@ type basePiece struct {
 	board    Board
 }
 
+type PieceFactory interface {
+	NewPiece(PieceType, Player, Color, Board) (Piece, error)
+}
+
 func (t PieceType) Valid() bool {
 	val := int(t)
 	return val >= 0 && val < maxPieceType
 }
 
-func newBasePiece(owner Player, type_ PieceType, board Board) (p *basePiece, err error) {
+func newBasePiece(owner Player, type_ PieceType, color Color, board Board) (p basePiece, err error) {
+	if owner == nil {
+		err = ErrNilPlayer
+		return
+	}
 	if !type_.Valid() {
 		err = ErrInvalidPieceType
 		return
 	}
-	p = &basePiece{
+	if !color.Valid() {
+		err = ErrInvalidColor
+		return
+	}
+	if board == nil {
+		err = ErrNilBoard
+		return
+	}
+	p = basePiece{
 		owner: owner,
 		type_: type_,
+		color: color,
 		board: board,
 	}
 	return
