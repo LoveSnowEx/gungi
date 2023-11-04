@@ -1,4 +1,7 @@
 @startuml play flow
+
+title 遊玩流程圖
+
 (*) -down-> "打開主程式"
 -down-> "顯示主選單"
 
