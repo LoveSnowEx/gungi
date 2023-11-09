@@ -1,0 +1,29 @@
+@startuml main flow
+
+title 主要流程圖
+
+start
+:開啟遊戲主程式;
+repeat
+:顯示主選單;
+note right
+  按鈕選項：
+  - 開始遊戲 Play
+  - 遊戲說明 Help
+  - 設定 Setting
+  - 退出遊戲 Exit
+end note
+if (操作主選單) then (退出遊戲)
+  :退出遊戲;
+  stop
+else (開始遊戲)
+  :顯示遊戲參數設定;
+  :設定遊戲參數;
+  group 遊戲中
+    :遊戲開始;
+    :遊戲進行;
+    :遊戲結束;
+  end group
+endif
+
+@enduml
