@@ -1,0 +1,17 @@
+@startuml game flow
+
+title 遊戲流程圖
+
+start
+:遊戲開始;
+repeat
+group 回合
+  :回合開始;
+  :玩家行動;
+  :回合結束;
+end group
+repeat while (將軍？) is (否) not (是)
+:遊戲結束;
+stop
+
+@enduml
