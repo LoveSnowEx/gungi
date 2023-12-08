@@ -1,5 +1,11 @@
 package model
 
+const (
+	BoardRows   = 9
+	BoardCols   = 9
+	BoardLevels = 3
+)
+
 type Board interface {
 	Board() [9][9][3]Piece
 	Get(loc Vector3D) Piece
@@ -9,13 +15,13 @@ type Board interface {
 }
 
 type board struct {
-	board     [9][9][3]Piece
+	board     [BoardRows][BoardCols][BoardLevels]Piece
 	locations map[Piece]Vector3D
 }
 
 func NewBoard() Board {
 	return &board{
-		board:     [9][9][3]Piece{},
+		board:     [BoardRows][BoardCols][BoardLevels]Piece{},
 		locations: map[Piece]Vector3D{},
 	}
 }

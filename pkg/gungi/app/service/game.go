@@ -4,6 +4,7 @@ import (
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/repo"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/service"
+	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/infra/config"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/infra/persist"
 )
@@ -36,6 +37,10 @@ func NewGameService() GameService {
 }
 
 func (c *gameService) CreateGame() (game model.Game, err error) {
+	if c == nil || c.gameRepo == nil || c.gameService == nil || c.playerRepo == nil {
+		err = errors.ErrInvalidService
+		return
+	}
 	game = c.gameService.Create()
 	if err = c.gameRepo.Save(game); err != nil {
 		game = nil
