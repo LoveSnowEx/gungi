@@ -1,8 +1,6 @@
 package po
 
 import (
-	"encoding/json"
-
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
 )
 
@@ -69,20 +67,7 @@ type Player struct {
 	Color Color
 }
 
-type GameMarshaller interface {
-	Marshal(game model.Game) ([]byte, error)
-	Unmarshal([]byte) (model.Game, error)
-}
-
-type gameMarshaller struct {
-}
-
-func NewGameMarshaller() GameMarshaller {
-	return &gameMarshaller{}
-}
-
-func (m *gameMarshaller) Marshal(game model.Game) ([]byte, error) {
-	gamePo := Game{}
+func NewGame(game model.Game) (gamePo Game) {
 	gamePo.Id = game.Id()
 	gamePo.CurrentTurn = fromColor(game.CurrentTurn())
 	gamePo.Phase = fromPhase(game.Phase())
@@ -111,10 +96,13 @@ func (m *gameMarshaller) Marshal(game model.Game) ([]byte, error) {
 	for _, color := range model.Colors() {
 		// Player
 		player := game.Player(color)
-		playerPo := &Player{}
-		playerPo.Id = player.Id()
-		playerPo.Name = player.Name()
-		playerPo.Color = fromColor(color)
+		if player != nil {
+			playerPo := &Player{}
+			playerPo.Id = player.Id()
+			playerPo.Name = player.Name()
+			playerPo.Color = fromColor(color)
+			gamePo.Players = append(gamePo.Players, *playerPo)
+		}
 		// Reserve
 		for _, piece := range game.Reserve(color).Pieces() {
 			piecePo := Piece{}
@@ -132,14 +120,10 @@ func (m *gameMarshaller) Marshal(game model.Game) ([]byte, error) {
 			gamePo.Discard = append(gamePo.Discard, piecePo)
 		}
 	}
-	return json.Marshal(gamePo)
+	return
 }
 
-func (m *gameMarshaller) Unmarshal(bytes []byte) (game model.Game, err error) {
-	gamePo := Game{}
-	if err := json.Unmarshal(bytes, &gamePo); err != nil {
-		return nil, err
-	}
+func (gamePo Game) ToModel() (game model.Game, err error) {
 	game = model.NewGame()
 	game.SetId(gamePo.Id)
 	game.SetCurrentTurn(toColor(gamePo.CurrentTurn))
@@ -175,7 +159,7 @@ func (m *gameMarshaller) Unmarshal(bytes []byte) (game model.Game, err error) {
 			}
 		}
 	}
-	return game, nil
+	return
 }
 
 func toColor(color Color) model.Color {

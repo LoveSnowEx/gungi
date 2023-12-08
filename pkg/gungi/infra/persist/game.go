@@ -1,6 +1,8 @@
 package persist
 
 import (
+	"encoding/json"
+
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/repo"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
@@ -13,13 +15,10 @@ var (
 )
 
 type gameRepoImpl struct {
-	gameMarshaller po.GameMarshaller
 }
 
 func NewGameRepo() repo.GameRepo {
-	return &gameRepoImpl{
-		gameMarshaller: po.NewGameMarshaller(),
-	}
+	return &gameRepoImpl{}
 }
 
 func (r *gameRepoImpl) Find(id uint) (game model.Game, err error) {
@@ -28,7 +27,11 @@ func (r *gameRepoImpl) Find(id uint) (game model.Game, err error) {
 		err = errors.ErrGameNotFound
 		return
 	}
-	return r.gameMarshaller.Unmarshal(jsonBytes)
+	gamePo := po.Game{}
+	if err = json.Unmarshal(jsonBytes, &gamePo); err != nil {
+		return
+	}
+	return gamePo.ToModel()
 }
 
 func (r *gameRepoImpl) Save(game model.Game) (err error) {
@@ -36,7 +39,17 @@ func (r *gameRepoImpl) Save(game model.Game) (err error) {
 		err = errors.ErrInvalidGame
 		return
 	}
-	jsonBytes, err := r.gameMarshaller.Marshal(game)
+	gamePo := po.NewGame(game)
+	if err != nil {
+		return
+	}
+	if gamePo.Id == 0 {
+		gamePo.Id = uint(len(gameStorage) + 1)
+	}
+	jsonBytes, err := json.Marshal(gamePo)
+	if err != nil {
+		return
+	}
 	gameStorage[game.Id()] = jsonBytes
 	return
 }
