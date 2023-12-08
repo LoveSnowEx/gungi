@@ -45,8 +45,8 @@ func PieceTypes() []PieceType {
 }
 
 type Piece interface {
-	// ID returns the ID of the piece.
-	ID() uint
+	// Id returns the id of the piece.
+	Id() uint
 	// Type returns the type of the piece.
 	Type() PieceType
 	// Color returns the color of the piece.
@@ -55,11 +55,11 @@ type Piece interface {
 
 type piece struct {
 	id        uint
-	color     Color
 	pieceType PieceType
+	color     Color
 }
 
-func (p piece) ID() uint {
+func (p piece) Id() uint {
 	return p.id
 }
 
@@ -71,7 +71,7 @@ func (p piece) Color() Color {
 	return p.color
 }
 
-func NewPiece(id uint, color Color, pieceType PieceType) Piece {
+func NewPiece(id uint, pieceType PieceType, color Color) Piece {
 	return &piece{
 		id:        id,
 		pieceType: pieceType,

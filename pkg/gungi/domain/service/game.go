@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
+	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
 )
 
 type GameService interface {
@@ -12,7 +13,7 @@ type GameService interface {
 	// Leave removes a player from the game.
 	Leave(game model.Game, player model.Player) error
 	// Start starts the game.
-	Start(game model.Game) error
+	Start(game model.Game, pieceAmounts map[model.PieceType]int) error
 }
 
 type gameService struct {
@@ -34,6 +35,27 @@ func (g *gameService) Leave(game model.Game, player model.Player) error {
 	return game.Leave(player)
 }
 
-func (g *gameService) Start(game model.Game) (err error) {
+func (g *gameService) Start(game model.Game, pieceAmounts map[model.PieceType]int) (err error) {
+	if game.Phase() != model.Setup {
+		err = errors.ErrInvalidPhase
+		return
+	}
+	if game.Player(model.White) == nil || game.Player(model.Black) == nil {
+		err = errors.ErrInvalidPlayerAmount
+		return
+	}
+	pieceId := uint(0)
+	for _, color := range model.Colors() {
+		for pieceType, amount := range pieceAmounts {
+			for i := 0; i < amount; i++ {
+				piece := model.NewPiece(pieceId, pieceType, color)
+				if err = game.Reserve(color).Add(piece); err != nil {
+					return
+				}
+				pieceId++
+			}
+		}
+	}
+	game.SetPhase(model.Prepare)
 	return
 }

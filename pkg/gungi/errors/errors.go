@@ -10,6 +10,8 @@ const (
 	ErrPieceAlreadyExists
 	ErrPieceNotFound
 	ErrGameNotFound
+	ErrInvalidPhase
+	ErrInvalidPlayerAmount
 )
 
 func (e GungiError) Error() string {

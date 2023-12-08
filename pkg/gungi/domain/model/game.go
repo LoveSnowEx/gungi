@@ -1,38 +1,27 @@
 package model
 
-import "github.com/LoveSnowEx/gungi/pkg/gungi/infra/errors"
+import "github.com/LoveSnowEx/gungi/pkg/gungi/errors"
 
-type Phase int
+type Phase interface {
+	isPhase()
+}
+
+type phase int
+
+func (p phase) isPhase() {}
 
 const (
-	Setup Phase = iota
+	Setup phase = iota
+	Prepare
 	Play
-)
-
-var (
-	PieceAmounts = map[PieceType]int{
-		Marshal:           1,
-		General:           1,
-		LieutenantGeneral: 1,
-		MajorGeneral:      2,
-		Samurai:           2,
-		Lancer:            3,
-		Knight:            2,
-		Spy:               2,
-		Fortress:          2,
-		Pawn:              4,
-		Cannon:            1,
-		Musketeer:         1,
-		Archer:            2,
-		Captain:           1,
-	}
+	End
 )
 
 type Game interface {
-	// ID returns the ID of the game.
-	ID() uint
-	// SetID sets the ID of the game.
-	SetID(id uint)
+	// Id returns the id of the game.
+	Id() uint
+	// SetId sets the id of the game.
+	SetId(id uint)
 	// Board returns the board of the game.
 	Board() Board
 	// Reserve returns the reserve of the game.
@@ -86,11 +75,11 @@ func NewGame() (g Game) {
 	return
 }
 
-func (g game) ID() uint {
+func (g game) Id() uint {
 	return g.id
 }
 
-func (g *game) SetID(id uint) {
+func (g *game) SetId(id uint) {
 	g.id = id
 }
 
@@ -116,7 +105,7 @@ func (g game) Player(color Color) Player {
 
 func (g *game) Join(color Color, player Player) (err error) {
 	for _, c := range Colors() {
-		if g.Player(c).ID() == player.ID() {
+		if g.Player(c).Id() == player.Id() {
 			err = errors.ErrPlayerAlreadyJoined
 			return
 		}
@@ -131,7 +120,7 @@ func (g *game) Join(color Color, player Player) (err error) {
 
 func (g *game) Leave(player Player) (err error) {
 	for _, c := range Colors() {
-		if g.Player(c).ID() == player.ID() {
+		if g.Player(c).Id() == player.Id() {
 			g.players[c] = nil
 			return
 		}

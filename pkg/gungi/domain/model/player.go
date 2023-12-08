@@ -1,8 +1,8 @@
 package model
 
 type Player interface {
-	ID() uint
-	SetID(id uint)
+	Id() uint
+	SetId(id uint)
 	Name() string
 	SetName(name string)
 }
@@ -12,11 +12,11 @@ type basePlayer struct {
 	name string
 }
 
-func (p basePlayer) ID() uint {
+func (p basePlayer) Id() uint {
 	return p.id
 }
 
-func (p *basePlayer) SetID(id uint) {
+func (p *basePlayer) SetId(id uint) {
 	p.id = id
 }
 

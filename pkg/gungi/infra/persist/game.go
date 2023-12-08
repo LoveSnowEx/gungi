@@ -1,24 +1,21 @@
-package repo
+package persist
 
 import (
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/repo"
-	"github.com/LoveSnowEx/gungi/pkg/gungi/infra/errors"
+	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
 )
 
-var gameStorage = make(map[uint]model.Game)
+var (
+	_           repo.GameRepo = (*gameRepoImpl)(nil)
+	gameStorage               = make(map[uint]model.Game)
+)
 
 type gameRepoImpl struct {
 }
 
 func NewGameRepo() repo.GameRepo {
-
 	return &gameRepoImpl{}
-}
-
-func (r *gameRepoImpl) Save(game model.Game) (err error) {
-	gameStorage[game.ID()] = game
-	return
 }
 
 func (r *gameRepoImpl) Find(id uint) (game model.Game, err error) {
@@ -27,4 +24,9 @@ func (r *gameRepoImpl) Find(id uint) (game model.Game, err error) {
 		err = errors.ErrGameNotFound
 	}
 	return game, err
+}
+
+func (r *gameRepoImpl) Save(game model.Game) (err error) {
+	gameStorage[game.Id()] = game
+	return
 }

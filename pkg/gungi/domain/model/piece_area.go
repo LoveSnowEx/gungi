@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/LoveSnowEx/gungi/pkg/gungi/infra/errors"
+	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
 	"k8s.io/apimachinery/pkg/util/sets"
 )
 
