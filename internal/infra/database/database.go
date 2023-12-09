@@ -1,22 +1,23 @@
 package database
 
 import (
-	"database/sql"
-
 	"github.com/LoveSnowEx/gungi/config"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 var (
-	db *sql.DB
+	db *gorm.DB
 )
 
-func DB() *sql.DB {
+func DB() *gorm.DB {
 	if db != nil {
 		return db
 	}
-	databaseConfig := config.Database
 	var err error
-	db, err = sql.Open(databaseConfig.Driver, databaseConfig.DataSource)
+	db, err = gorm.Open(
+		sqlite.Open(config.Database.DataSource),
+	)
 	if err != nil {
 		panic(err)
 	}

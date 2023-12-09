@@ -1,6 +1,8 @@
 package po
 
+import "gorm.io/gorm"
+
 type User struct {
-	Id   uint
+	gorm.Model
 	Name string
 }

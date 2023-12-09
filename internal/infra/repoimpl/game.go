@@ -1,8 +1,9 @@
 package persist
 
 import (
-	"encoding/json"
+	"context"
 
+	"github.com/LoveSnowEx/gungi/internal/infra/dal"
 	"github.com/LoveSnowEx/gungi/internal/infra/po"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/repo"
@@ -10,8 +11,7 @@ import (
 )
 
 var (
-	_           repo.GameRepo = (*gameRepoImpl)(nil)
-	gameStorage               = make(map[uint][]byte)
+	_ repo.GameRepo = (*gameRepoImpl)(nil)
 )
 
 type gameRepoImpl struct {
@@ -25,35 +25,35 @@ func NewGameRepo() repo.GameRepo {
 }
 
 func (r *gameRepoImpl) Find(id uint) (game model.Game, err error) {
-	jsonBytes, ok := gameStorage[id]
-	if !ok {
+	g := dal.Game
+	gamePo, err := g.WithContext(context.Background()).Where(g.ID.Eq(id)).Preload(g.Players).First()
+	if err != nil {
 		err = errors.ErrGameNotFound
 		return
 	}
-	gamePo := po.Game{}
-	if err = json.Unmarshal(jsonBytes, &gamePo); err != nil {
-		return
-	}
-	players := make([]model.Player, 0, len(gamePo.Players))
-	for _, playerPo := range gamePo.Players {
-		player, err := r.playerRepo.Find(playerPo.Id)
-		if err != nil {
-			return nil, err
-		}
-		players = append(players, player)
-	}
 	game = model.NewGame()
-	game.SetId(gamePo.Id)
+	game.SetId(gamePo.ID)
 	game.SetCurrentTurn(po.ToColor(gamePo.CurrentTurn))
 	game.SetPhase(po.ToPhase(gamePo.Phase))
+	// Players
+	for _, playerPo := range gamePo.Players {
+		user := playerPo.User
+		player := model.NewPlayer(user.Name)
+		player.SetId(user.ID)
+		err = game.Join(po.ToColor(playerPo.Color), player)
+		if err != nil {
+			game = nil
+			return
+		}
+	}
 	// Board
 	for _, piecePo := range gamePo.BoardPieces {
-		piece := model.NewPiece(piecePo.Id, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
+		piece := model.NewPiece(piecePo.ID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
 		game.Board().Set(model.NewVector3D(piecePo.Row, piecePo.Column, 0), piece)
 	}
 	// Reserve
 	for _, piecePo := range gamePo.Reserve {
-		piece := model.NewPiece(piecePo.Id, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
+		piece := model.NewPiece(piecePo.ID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
 		if err = game.Reserve(po.ToColor(piecePo.Color)).Add(piece); err != nil {
 			game = nil
 			return
@@ -61,7 +61,7 @@ func (r *gameRepoImpl) Find(id uint) (game model.Game, err error) {
 	}
 	// Discard
 	for _, piecePo := range gamePo.Discard {
-		piece := model.NewPiece(piecePo.Id, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
+		piece := model.NewPiece(piecePo.ID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
 		if err = game.Discard(po.ToColor(piecePo.Color)).Add(piece); err != nil {
 			game = nil
 			return
@@ -75,42 +75,78 @@ func (r *gameRepoImpl) Save(game model.Game) (err error) {
 		err = errors.ErrInvalidGame
 		return
 	}
+	g := dal.Game
 	gamePo := po.Game{
-		Id: game.Id(),
+		Players:     make([]po.Player, 0),
+		BoardPieces: make([]po.BoardPiece, 0),
+		Reserve:     make([]po.Piece, 0),
+		Discard:     make([]po.Piece, 0),
+		CurrentTurn: po.FromColor(game.CurrentTurn()),
+		Phase:       po.FromPhase(game.Phase()),
 	}
+	if game.Id() != 0 {
+		gamePo.ID = game.Id()
+	}
+	err = g.WithContext(context.Background()).Save(&gamePo)
+	if err != nil {
+		return
+	}
+	// Board
+	for x := range [model.BoardRows]struct{}{} {
+		for y := range [model.BoardCols]struct{}{} {
+			for z := range [model.BoardLevels]struct{}{} {
+				if piece := game.Board().Get(model.NewVector3D(x, y, z)); piece != nil {
+					piecePo := po.BoardPiece{
+						Piece: po.Piece{
+							PeiceID: piece.Id(),
+							GameID:  gamePo.ID,
+							Type:    po.FromPieceType(piece.Type()),
+							Color:   po.FromColor(piece.Color()),
+						},
+						Row:    x,
+						Column: y,
+						Level:  z,
+					}
+					gamePo.BoardPieces = append(gamePo.BoardPieces, piecePo)
+				}
+			}
+		}
+	}
+	// Players, Reserve, Discard
 	for _, color := range model.Colors() {
+		// Players
 		if player := game.Player(color); player != nil {
-			gamePo.Players = append(gamePo.Players, po.Player{
-				Id:    player.Id(),
-				Color: po.FromColor(color),
-			})
+			if player.Id() == 0 {
+				return errors.ErrInvalidPlayer
+			}
+			playerPo := po.Player{
+				UserID: player.Id(),
+				GameID: gamePo.ID,
+				Color:  po.FromColor(color),
+			}
+			gamePo.Players = append(gamePo.Players, playerPo)
 		}
 		// Reserve
 		for _, piece := range game.Reserve(color).Pieces() {
 			piecePo := po.Piece{
-				Id:    piece.Id(),
-				Type:  po.FromPieceType(piece.Type()),
-				Color: po.FromColor(piece.Color()),
+				PeiceID: piece.Id(),
+				GameID:  gamePo.ID,
+				Type:    po.FromPieceType(piece.Type()),
+				Color:   po.FromColor(piece.Color()),
 			}
 			gamePo.Reserve = append(gamePo.Reserve, piecePo)
 		}
 		// Discard
 		for _, piece := range game.Discard(color).Pieces() {
 			piecePo := po.Piece{
-				Id:    piece.Id(),
-				Type:  po.FromPieceType(piece.Type()),
-				Color: po.FromColor(piece.Color()),
+				PeiceID: piece.Id(),
+				GameID:  gamePo.ID,
+				Type:    po.FromPieceType(piece.Type()),
+				Color:   po.FromColor(piece.Color()),
 			}
 			gamePo.Discard = append(gamePo.Discard, piecePo)
 		}
 	}
-	if gamePo.Id == 0 {
-		gamePo.Id = uint(len(gameStorage) + 1)
-	}
-	jsonBytes, err := json.Marshal(gamePo)
-	if err != nil {
-		return
-	}
-	gameStorage[game.Id()] = jsonBytes
+	err = g.WithContext(context.Background()).Save(&gamePo)
 	return
 }

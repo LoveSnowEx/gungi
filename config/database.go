@@ -12,9 +12,10 @@ type DatabaseConfig struct {
 }
 
 func init() {
-	viper.SetDefault("database.driver", "sqlite3")
-	viper.SetDefault("database.dataSource", "gungi.sqlite3")
+	viper.SetDefault("database.driver", "sqlite")
+	viper.SetDefault("database.dataSource", "gungi.db")
 	viper.AutomaticEnv()
+
 	Database.Driver = viper.GetString("database.driver")
 	Database.DataSource = viper.GetString("database.dataSource")
 }

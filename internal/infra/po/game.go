@@ -2,6 +2,7 @@ package po
 
 import (
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
+	"gorm.io/gorm"
 )
 
 type Color uint
@@ -40,7 +41,7 @@ const (
 )
 
 type Game struct {
-	Id          uint
+	gorm.Model
 	Players     []Player
 	BoardPieces []BoardPiece
 	Reserve     []Piece
@@ -50,20 +51,26 @@ type Game struct {
 }
 
 type Piece struct {
-	Id    uint
-	Type  PieceType
-	Color Color
+	gorm.Model
+	PeiceID uint
+	GameID  uint
+	Type    PieceType
+	Color   Color
 }
 
 type BoardPiece struct {
 	Piece
 	Row    int
 	Column int
+	Level  int
 }
 
 type Player struct {
-	Id    uint
-	Color Color
+	gorm.Model
+	GameID uint
+	UserID uint
+	User   User
+	Color  Color
 }
 
 func ToColor(color Color) model.Color {
