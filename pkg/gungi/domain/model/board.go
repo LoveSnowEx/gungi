@@ -9,7 +9,7 @@ const (
 type Board interface {
 	Board() [9][9][3]Piece
 	Get(loc Vector3D) Piece
-	GetLocation(peice Piece) Vector3D
+	GetLocation(piece Piece) Vector3D
 	Set(loc Vector3D, piece Piece)
 	Take(piece Piece)
 }

@@ -1,8 +1,467 @@
 @startuml
+namespace api {
+    interface GameController  {
+    }
+}
+
+
+
+namespace config {
+    class DatabaseConfig << (S,Aquamarine) >> {
+        + Driver string
+        + DataSource string
+
+    }
+}
+
+
+
+namespace dal {
+    interface IGameDo  {
+        + Debug() IGameDo
+        + WithContext(ctx context.Context) IGameDo
+        + WithResult(fc <font color=blue>func</font>(gen.Dao) ) gen.ResultInfo
+        + ReplaceDB(db *gorm.DB) 
+        + ReadDB() IGameDo
+        + WriteDB() IGameDo
+        + As(alias string) gen.Dao
+        + Session(config *gorm.Session) IGameDo
+        + Columns(cols ...field.Expr) gen.Columns
+        + Clauses(conds ...clause.Expression) IGameDo
+        + Not(conds ...gen.Condition) IGameDo
+        + Or(conds ...gen.Condition) IGameDo
+        + Select(conds ...field.Expr) IGameDo
+        + Where(conds ...gen.Condition) IGameDo
+        + Order(conds ...field.Expr) IGameDo
+        + Distinct(cols ...field.Expr) IGameDo
+        + Omit(cols ...field.Expr) IGameDo
+        + Join(table schema.Tabler, on ...field.Expr) IGameDo
+        + LeftJoin(table schema.Tabler, on ...field.Expr) IGameDo
+        + RightJoin(table schema.Tabler, on ...field.Expr) IGameDo
+        + Group(cols ...field.Expr) IGameDo
+        + Having(conds ...gen.Condition) IGameDo
+        + Limit(limit int) IGameDo
+        + Offset(offset int) IGameDo
+        + Count() (int64, error)
+        + Scopes(funcs ...<font color=blue>func</font>(gen.Dao) gen.Dao) IGameDo
+        + Unscoped() IGameDo
+        + Create(values ...*po.Game) error
+        + CreateInBatches(values []*po.Game, batchSize int) error
+        + Save(values ...*po.Game) error
+        + First() (*po.Game, error)
+        + Take() (*po.Game, error)
+        + Last() (*po.Game, error)
+        + Find() ([]*po.Game, error)
+        + FindInBatch(batchSize int, fc <font color=blue>func</font>(gen.Dao, int) error) ([]*po.Game, error)
+        + FindInBatches(result *[]*po.Game, batchSize int, fc <font color=blue>func</font>(gen.Dao, int) error) error
+        + Pluck(column field.Expr, dest <font color=blue>interface</font>{}) error
+        + Delete( ...*po.Game) (gen.ResultInfo, error)
+        + Update(column field.Expr, value <font color=blue>interface</font>{}) (gen.ResultInfo, error)
+        + UpdateSimple(columns ...field.AssignExpr) (gen.ResultInfo, error)
+        + Updates(value <font color=blue>interface</font>{}) (gen.ResultInfo, error)
+        + UpdateColumn(column field.Expr, value <font color=blue>interface</font>{}) (gen.ResultInfo, error)
+        + UpdateColumnSimple(columns ...field.AssignExpr) (gen.ResultInfo, error)
+        + UpdateColumns(value <font color=blue>interface</font>{}) (gen.ResultInfo, error)
+        + UpdateFrom(q gen.SubQuery) gen.Dao
+        + Attrs(attrs ...field.AssignExpr) IGameDo
+        + Assign(attrs ...field.AssignExpr) IGameDo
+        + Joins(fields ...field.RelationField) IGameDo
+        + Preload(fields ...field.RelationField) IGameDo
+        + FirstOrInit() (*po.Game, error)
+        + FirstOrCreate() (*po.Game, error)
+        + FindByPage(offset int, limit int) ([]*po.Game, int64, error)
+        + ScanByPage(result <font color=blue>interface</font>{}, offset int, limit int) (int64, error)
+        + Scan(result <font color=blue>interface</font>{}) error
+        + Returning(value <font color=blue>interface</font>{}, columns ...string) IGameDo
+        + UnderlyingDB() *gorm.DB
+
+    }
+    interface IUserDo  {
+        + Debug() IUserDo
+        + WithContext(ctx context.Context) IUserDo
+        + WithResult(fc <font color=blue>func</font>(gen.Dao) ) gen.ResultInfo
+        + ReplaceDB(db *gorm.DB) 
+        + ReadDB() IUserDo
+        + WriteDB() IUserDo
+        + As(alias string) gen.Dao
+        + Session(config *gorm.Session) IUserDo
+        + Columns(cols ...field.Expr) gen.Columns
+        + Clauses(conds ...clause.Expression) IUserDo
+        + Not(conds ...gen.Condition) IUserDo
+        + Or(conds ...gen.Condition) IUserDo
+        + Select(conds ...field.Expr) IUserDo
+        + Where(conds ...gen.Condition) IUserDo
+        + Order(conds ...field.Expr) IUserDo
+        + Distinct(cols ...field.Expr) IUserDo
+        + Omit(cols ...field.Expr) IUserDo
+        + Join(table schema.Tabler, on ...field.Expr) IUserDo
+        + LeftJoin(table schema.Tabler, on ...field.Expr) IUserDo
+        + RightJoin(table schema.Tabler, on ...field.Expr) IUserDo
+        + Group(cols ...field.Expr) IUserDo
+        + Having(conds ...gen.Condition) IUserDo
+        + Limit(limit int) IUserDo
+        + Offset(offset int) IUserDo
+        + Count() (int64, error)
+        + Scopes(funcs ...<font color=blue>func</font>(gen.Dao) gen.Dao) IUserDo
+        + Unscoped() IUserDo
+        + Create(values ...*po.User) error
+        + CreateInBatches(values []*po.User, batchSize int) error
+        + Save(values ...*po.User) error
+        + First() (*po.User, error)
+        + Take() (*po.User, error)
+        + Last() (*po.User, error)
+        + Find() ([]*po.User, error)
+        + FindInBatch(batchSize int, fc <font color=blue>func</font>(gen.Dao, int) error) ([]*po.User, error)
+        + FindInBatches(result *[]*po.User, batchSize int, fc <font color=blue>func</font>(gen.Dao, int) error) error
+        + Pluck(column field.Expr, dest <font color=blue>interface</font>{}) error
+        + Delete( ...*po.User) (gen.ResultInfo, error)
+        + Update(column field.Expr, value <font color=blue>interface</font>{}) (gen.ResultInfo, error)
+        + UpdateSimple(columns ...field.AssignExpr) (gen.ResultInfo, error)
+        + Updates(value <font color=blue>interface</font>{}) (gen.ResultInfo, error)
+        + UpdateColumn(column field.Expr, value <font color=blue>interface</font>{}) (gen.ResultInfo, error)
+        + UpdateColumnSimple(columns ...field.AssignExpr) (gen.ResultInfo, error)
+        + UpdateColumns(value <font color=blue>interface</font>{}) (gen.ResultInfo, error)
+        + UpdateFrom(q gen.SubQuery) gen.Dao
+        + Attrs(attrs ...field.AssignExpr) IUserDo
+        + Assign(attrs ...field.AssignExpr) IUserDo
+        + Joins(fields ...field.RelationField) IUserDo
+        + Preload(fields ...field.RelationField) IUserDo
+        + FirstOrInit() (*po.User, error)
+        + FirstOrCreate() (*po.User, error)
+        + FindByPage(offset int, limit int) ([]*po.User, int64, error)
+        + ScanByPage(result <font color=blue>interface</font>{}, offset int, limit int) (int64, error)
+        + Scan(result <font color=blue>interface</font>{}) error
+        + Returning(value <font color=blue>interface</font>{}, columns ...string) IUserDo
+        + UnderlyingDB() *gorm.DB
+
+    }
+    class Query << (S,Aquamarine) >> {
+        - db *gorm.DB
+
+        + Game game
+        + User user
+
+        - clone(db *gorm.DB) *Query
+
+        + Available() bool
+        + ReadDB() *Query
+        + WriteDB() *Query
+        + ReplaceDB(db *gorm.DB) *Query
+        + WithContext(ctx context.Context) *queryCtx
+        + Transaction(fc <font color=blue>func</font>(*Query) error, opts ...*sql.TxOptions) error
+        + Begin(opts ...*sql.TxOptions) *QueryTx
+
+    }
+    class QueryTx << (S,Aquamarine) >> {
+        + Error error
+
+        + Commit() error
+        + Rollback() error
+        + SavePoint(name string) error
+        + RollbackTo(name string) error
+
+    }
+    class game << (S,Aquamarine) >> {
+        - gameDo gameDo
+        - fieldMap <font color=blue>map</font>[string]field.Expr
+
+        + ALL field.Asterisk
+        + ID field.Uint
+        + CreatedAt field.Time
+        + UpdatedAt field.Time
+        + DeletedAt field.Field
+        + CurrentTurn field.Uint
+        + Phase field.Uint
+        + Players gameHasManyPlayers
+        + BoardPieces gameHasManyBoardPieces
+        + Reserve gameHasManyReserve
+        + Discard gameHasManyDiscard
+
+        - updateTableName(table string) *game
+        - fillFieldMap() 
+        - clone(db *gorm.DB) game
+        - replaceDB(db *gorm.DB) game
+
+        + Table(newTableName string) *game
+        + As(alias string) *game
+        + WithContext(ctx context.Context) IGameDo
+        + TableName() string
+        + Alias() string
+        + Columns(cols ...field.Expr) gen.Columns
+        + GetFieldByName(fieldName string) (field.OrderExpr, bool)
+
+    }
+    class gameDo << (S,Aquamarine) >> {
+        - withDO(do gen.Dao) *gameDo
+
+        + Debug() IGameDo
+        + WithContext(ctx context.Context) IGameDo
+        + ReadDB() IGameDo
+        + WriteDB() IGameDo
+        + Session(config *gorm.Session) IGameDo
+        + Clauses(conds ...clause.Expression) IGameDo
+        + Returning(value <font color=blue>interface</font>{}, columns ...string) IGameDo
+        + Not(conds ...gen.Condition) IGameDo
+        + Or(conds ...gen.Condition) IGameDo
+        + Select(conds ...field.Expr) IGameDo
+        + Where(conds ...gen.Condition) IGameDo
+        + Order(conds ...field.Expr) IGameDo
+        + Distinct(cols ...field.Expr) IGameDo
+        + Omit(cols ...field.Expr) IGameDo
+        + Join(table schema.Tabler, on ...field.Expr) IGameDo
+        + LeftJoin(table schema.Tabler, on ...field.Expr) IGameDo
+        + RightJoin(table schema.Tabler, on ...field.Expr) IGameDo
+        + Group(cols ...field.Expr) IGameDo
+        + Having(conds ...gen.Condition) IGameDo
+        + Limit(limit int) IGameDo
+        + Offset(offset int) IGameDo
+        + Scopes(funcs ...<font color=blue>func</font>(gen.Dao) gen.Dao) IGameDo
+        + Unscoped() IGameDo
+        + Create(values ...*po.Game) error
+        + CreateInBatches(values []*po.Game, batchSize int) error
+        + Save(values ...*po.Game) error
+        + First() (*po.Game, error)
+        + Take() (*po.Game, error)
+        + Last() (*po.Game, error)
+        + Find() ([]*po.Game, error)
+        + FindInBatch(batchSize int, fc <font color=blue>func</font>(gen.Dao, int) error) ([]*po.Game, error)
+        + FindInBatches(result *[]*po.Game, batchSize int, fc <font color=blue>func</font>(gen.Dao, int) error) error
+        + Attrs(attrs ...field.AssignExpr) IGameDo
+        + Assign(attrs ...field.AssignExpr) IGameDo
+        + Joins(fields ...field.RelationField) IGameDo
+        + Preload(fields ...field.RelationField) IGameDo
+        + FirstOrInit() (*po.Game, error)
+        + FirstOrCreate() (*po.Game, error)
+        + FindByPage(offset int, limit int) ([]*po.Game, int64, error)
+        + ScanByPage(result <font color=blue>interface</font>{}, offset int, limit int) (int64, error)
+        + Scan(result <font color=blue>interface</font>{}) error
+        + Delete(models ...*po.Game) (gen.ResultInfo, error)
+
+    }
+    class gameHasManyBoardPieces << (S,Aquamarine) >> {
+        - db *gorm.DB
+
+        + Where(conds ...field.Expr) *gameHasManyBoardPieces
+        + WithContext(ctx context.Context) *gameHasManyBoardPieces
+        + Session(session *gorm.Session) *gameHasManyBoardPieces
+        + Model(m *po.Game) *gameHasManyBoardPiecesTx
+
+    }
+    class gameHasManyBoardPiecesTx << (S,Aquamarine) >> {
+        - tx *gorm.Association
+
+        + Find() ([]*po.BoardPiece, error)
+        + Append(values ...*po.BoardPiece) error
+        + Replace(values ...*po.BoardPiece) error
+        + Delete(values ...*po.BoardPiece) error
+        + Clear() error
+        + Count() int64
+
+    }
+    class gameHasManyDiscard << (S,Aquamarine) >> {
+        - db *gorm.DB
+
+        + Where(conds ...field.Expr) *gameHasManyDiscard
+        + WithContext(ctx context.Context) *gameHasManyDiscard
+        + Session(session *gorm.Session) *gameHasManyDiscard
+        + Model(m *po.Game) *gameHasManyDiscardTx
+
+    }
+    class gameHasManyDiscardTx << (S,Aquamarine) >> {
+        - tx *gorm.Association
+
+        + Find() ([]*po.Piece, error)
+        + Append(values ...*po.Piece) error
+        + Replace(values ...*po.Piece) error
+        + Delete(values ...*po.Piece) error
+        + Clear() error
+        + Count() int64
+
+    }
+    class gameHasManyPlayers << (S,Aquamarine) >> {
+        - db *gorm.DB
+
+        + User <font color=blue>struct</font>{field.RelationField}
+
+        + Where(conds ...field.Expr) *gameHasManyPlayers
+        + WithContext(ctx context.Context) *gameHasManyPlayers
+        + Session(session *gorm.Session) *gameHasManyPlayers
+        + Model(m *po.Game) *gameHasManyPlayersTx
+
+    }
+    class gameHasManyPlayersTx << (S,Aquamarine) >> {
+        - tx *gorm.Association
+
+        + Find() ([]*po.Player, error)
+        + Append(values ...*po.Player) error
+        + Replace(values ...*po.Player) error
+        + Delete(values ...*po.Player) error
+        + Clear() error
+        + Count() int64
+
+    }
+    class gameHasManyReserve << (S,Aquamarine) >> {
+        - db *gorm.DB
+
+        + Where(conds ...field.Expr) *gameHasManyReserve
+        + WithContext(ctx context.Context) *gameHasManyReserve
+        + Session(session *gorm.Session) *gameHasManyReserve
+        + Model(m *po.Game) *gameHasManyReserveTx
+
+    }
+    class gameHasManyReserveTx << (S,Aquamarine) >> {
+        - tx *gorm.Association
+
+        + Find() ([]*po.Piece, error)
+        + Append(values ...*po.Piece) error
+        + Replace(values ...*po.Piece) error
+        + Delete(values ...*po.Piece) error
+        + Clear() error
+        + Count() int64
+
+    }
+    class queryCtx << (S,Aquamarine) >> {
+        + Game IGameDo
+        + User IUserDo
+
+    }
+    class user << (S,Aquamarine) >> {
+        - userDo userDo
+        - fieldMap <font color=blue>map</font>[string]field.Expr
+
+        + ALL field.Asterisk
+        + ID field.Uint
+        + CreatedAt field.Time
+        + UpdatedAt field.Time
+        + DeletedAt field.Field
+        + Name field.String
+
+        - updateTableName(table string) *user
+        - fillFieldMap() 
+        - clone(db *gorm.DB) user
+        - replaceDB(db *gorm.DB) user
+
+        + Table(newTableName string) *user
+        + As(alias string) *user
+        + WithContext(ctx context.Context) IUserDo
+        + TableName() string
+        + Alias() string
+        + Columns(cols ...field.Expr) gen.Columns
+        + GetFieldByName(fieldName string) (field.OrderExpr, bool)
+
+    }
+    class userDo << (S,Aquamarine) >> {
+        - withDO(do gen.Dao) *userDo
+
+        + Debug() IUserDo
+        + WithContext(ctx context.Context) IUserDo
+        + ReadDB() IUserDo
+        + WriteDB() IUserDo
+        + Session(config *gorm.Session) IUserDo
+        + Clauses(conds ...clause.Expression) IUserDo
+        + Returning(value <font color=blue>interface</font>{}, columns ...string) IUserDo
+        + Not(conds ...gen.Condition) IUserDo
+        + Or(conds ...gen.Condition) IUserDo
+        + Select(conds ...field.Expr) IUserDo
+        + Where(conds ...gen.Condition) IUserDo
+        + Order(conds ...field.Expr) IUserDo
+        + Distinct(cols ...field.Expr) IUserDo
+        + Omit(cols ...field.Expr) IUserDo
+        + Join(table schema.Tabler, on ...field.Expr) IUserDo
+        + LeftJoin(table schema.Tabler, on ...field.Expr) IUserDo
+        + RightJoin(table schema.Tabler, on ...field.Expr) IUserDo
+        + Group(cols ...field.Expr) IUserDo
+        + Having(conds ...gen.Condition) IUserDo
+        + Limit(limit int) IUserDo
+        + Offset(offset int) IUserDo
+        + Scopes(funcs ...<font color=blue>func</font>(gen.Dao) gen.Dao) IUserDo
+        + Unscoped() IUserDo
+        + Create(values ...*po.User) error
+        + CreateInBatches(values []*po.User, batchSize int) error
+        + Save(values ...*po.User) error
+        + First() (*po.User, error)
+        + Take() (*po.User, error)
+        + Last() (*po.User, error)
+        + Find() ([]*po.User, error)
+        + FindInBatch(batchSize int, fc <font color=blue>func</font>(gen.Dao, int) error) ([]*po.User, error)
+        + FindInBatches(result *[]*po.User, batchSize int, fc <font color=blue>func</font>(gen.Dao, int) error) error
+        + Attrs(attrs ...field.AssignExpr) IUserDo
+        + Assign(attrs ...field.AssignExpr) IUserDo
+        + Joins(fields ...field.RelationField) IUserDo
+        + Preload(fields ...field.RelationField) IUserDo
+        + FirstOrInit() (*po.User, error)
+        + FirstOrCreate() (*po.User, error)
+        + FindByPage(offset int, limit int) ([]*po.User, int64, error)
+        + ScanByPage(result <font color=blue>interface</font>{}, offset int, limit int) (int64, error)
+        + Scan(result <font color=blue>interface</font>{}) error
+        + Delete(models ...*po.User) (gen.ResultInfo, error)
+
+    }
+}
+"dal.Query" *-- "dal.QueryTx"
+"gen.DO" *-- "dal.gameDo"
+"field.RelationField" *-- "dal.gameHasManyBoardPieces"
+"field.RelationField" *-- "dal.gameHasManyDiscard"
+"field.RelationField" *-- "dal.gameHasManyPlayers"
+"field.RelationField" *-- "dal.gameHasManyReserve"
+"gen.DO" *-- "dal.userDo"
+
+
+"dal.Query" o-- "dal.game"
+"dal.Query" o-- "dal.user"
+"dal.Query" o-- "gorm.DB"
+"dal.game" o-- "dal.gameDo"
+"dal.game" o-- "dal.gameHasManyBoardPieces"
+"dal.game" o-- "dal.gameHasManyDiscard"
+"dal.game" o-- "dal.gameHasManyPlayers"
+"dal.game" o-- "dal.gameHasManyReserve"
+"dal.game" o-- "field.Asterisk"
+"dal.game" o-- "field.Expr"
+"dal.game" o-- "field.Field"
+"dal.game" o-- "field.Time"
+"dal.game" o-- "field.Uint"
+"dal.gameHasManyBoardPieces" o-- "gorm.DB"
+"dal.gameHasManyBoardPiecesTx" o-- "gorm.Association"
+"dal.gameHasManyDiscard" o-- "gorm.DB"
+"dal.gameHasManyDiscardTx" o-- "gorm.Association"
+"dal.gameHasManyPlayers" o-- "gorm.DB"
+"dal.gameHasManyPlayersTx" o-- "gorm.Association"
+"dal.gameHasManyReserve" o-- "gorm.DB"
+"dal.gameHasManyReserveTx" o-- "gorm.Association"
+"dal.queryCtx" o-- "dal.IGameDo"
+"dal.queryCtx" o-- "dal.IUserDo"
+"dal.user" o-- "dal.userDo"
+"dal.user" o-- "field.Asterisk"
+"dal.user" o-- "field.Expr"
+"dal.user" o-- "field.Field"
+"dal.user" o-- "field.String"
+"dal.user" o-- "field.Time"
+"dal.user" o-- "field.Uint"
+
+namespace dto {
+    class Game << (S,Aquamarine) >> {
+        + Players []Player
+
+    }
+    class Player << (S,Aquamarine) >> {
+        + Name string
+
+    }
+}
+
+
+"dto.Game" o-- "dto.Player"
+
 namespace errors {
+    class CoreError << (S,Aquamarine) >> {
+        + Error() string
+
+    }
     class GungiError << (S,Aquamarine) >> {
         + Error() string
 
+    }
+    class errors.CoreError << (T, #FF7700) >>  {
     }
     class errors.GungiError << (T, #FF7700) >>  {
     }
@@ -14,7 +473,7 @@ namespace model {
     interface Board  {
         + Board() [][][]Piece
         + Get(loc Vector3D) Piece
-        + GetLocation(peice Piece) Vector3D
+        + GetLocation(piece Piece) Vector3D
         + Set(loc Vector3D, piece Piece) 
         + Take(piece Piece) 
 
@@ -62,6 +521,13 @@ namespace model {
 
     }
     interface Player  {
+        + Id() uint
+        + SetId(id uint) 
+        + Name() string
+        + SetName(name string) 
+
+    }
+    interface User  {
         + Id() uint
         + SetId(id uint) 
         + Name() string
@@ -176,6 +642,16 @@ namespace model {
     }
     class player << (S,Aquamarine) >> {
     }
+    class user << (S,Aquamarine) >> {
+        - id uint
+        - name string
+
+        + Id() uint
+        + SetId(id uint) 
+        + Name() string
+        + SetName(name string) 
+
+    }
 }
 "model.Vector2D" *-- "model.Vector3D"
 "model.Vector2DImpl" *-- "model.Vector3DImpl"
@@ -184,6 +660,7 @@ namespace model {
 "model.Vector2D" <|-- "model.Vector2DImpl"
 "model.Vector3D" <|-- "model.Vector3DImpl"
 "model.Player" <|-- "model.basePlayer"
+"model.User" <|-- "model.basePlayer"
 "model.Board" <|-- "model.board"
 "model.Color" <|-- "model.color"
 "model.Game" <|-- "model.game"
@@ -191,6 +668,8 @@ namespace model {
 "model.Piece" <|-- "model.piece"
 "model.PieceArea" <|-- "model.pieceArea"
 "model.PieceType" <|-- "model.pieceType"
+"model.Player" <|-- "model.user"
+"model.User" <|-- "model.user"
 
 "model.board" o-- "model.Piece"
 "model.board" o-- "model.Vector3D"
@@ -204,29 +683,38 @@ namespace model {
 
 namespace persist {
     class gameRepoImpl << (S,Aquamarine) >> {
+        - playerRepo repo.PlayerRepo
+
         + Find(id uint) (model.Game, error)
         + Save(game model.Game) error
 
     }
     class playerRepoImpl << (S,Aquamarine) >> {
         + Find(id uint) (model.Player, error)
-        + Save(player model.Player) error
+
+    }
+    class userRepoImpl << (S,Aquamarine) >> {
+        + Find(id uint) (model.User, error)
+        + Create(name string) (model.User, error)
 
     }
 }
 
 "repo.GameRepo" <|-- "persist.gameRepoImpl"
 "repo.PlayerRepo" <|-- "persist.playerRepoImpl"
+"repo.UserRepo" <|-- "persist.userRepoImpl"
+"usecase.UserUseCase" <|-- "persist.userRepoImpl"
 
+"persist.gameRepoImpl" o-- "repo.PlayerRepo"
 
 namespace po {
     class BoardPiece << (S,Aquamarine) >> {
         + Row int
         + Column int
+        + Level int
 
     }
     class Game << (S,Aquamarine) >> {
-        + Id uint
         + Players []Player
         + BoardPieces []BoardPiece
         + Reserve []Piece
@@ -234,19 +722,23 @@ namespace po {
         + CurrentTurn Color
         + Phase Phase
 
-        + ToModel() (model.Game, error)
-
     }
     class Piece << (S,Aquamarine) >> {
-        + Id uint
+        + PeiceID uint
+        + GameID uint
         + Type PieceType
         + Color Color
 
     }
     class Player << (S,Aquamarine) >> {
-        + Id uint
-        + Name string
+        + GameID uint
+        + UserID uint
+        + User User
         + Color Color
+
+    }
+    class User << (S,Aquamarine) >> {
+        + Name string
 
     }
     class po.Color << (T, #FF7700) >>  {
@@ -257,6 +749,10 @@ namespace po {
     }
 }
 "po.Piece" *-- "po.BoardPiece"
+"gorm.Model" *-- "po.Game"
+"gorm.Model" *-- "po.Piece"
+"gorm.Model" *-- "po.Player"
+"gorm.Model" *-- "po.User"
 
 
 "po.Game" o-- "po.BoardPiece"
@@ -267,6 +763,7 @@ namespace po {
 "po.Piece" o-- "po.Color"
 "po.Piece" o-- "po.PieceType"
 "po.Player" o-- "po.Color"
+"po.Player" o-- "po.User"
 
 namespace repo {
     interface GameRepo  {
@@ -276,7 +773,11 @@ namespace repo {
     }
     interface PlayerRepo  {
         + Find(id uint) (model.Player, error)
-        + Save(player model.Player) error
+
+    }
+    interface UserRepo  {
+        + Find(id uint) (model.User, error)
+        + Create(name string) (model.User, error)
 
     }
 }
@@ -312,9 +813,19 @@ namespace usecase {
         + StartGame(gameId uint) error
 
     }
+    class GameUseCaseConfig << (S,Aquamarine) >> {
+        + GameRepo repo.GameRepo
+        + PlayerRepo repo.PlayerRepo
+
+    }
+    interface UserUseCase  {
+        + Find(id uint) (model.User, error)
+        + Create(name string) (model.User, error)
+
+    }
     class gameUseCase << (S,Aquamarine) >> {
-        - gameRepo repo.GameRepo
         - gameService service.GameService
+        - gameRepo repo.GameRepo
         - playerRepo repo.PlayerRepo
 
         + CreateGame() (model.Game, error)
@@ -324,14 +835,27 @@ namespace usecase {
         + StartGame(gameId uint) error
 
     }
+    class userUseCase << (S,Aquamarine) >> {
+        - userRepo repo.UserRepo
+
+        + Find(id uint) (model.User, error)
+        + Create(name string) (model.User, error)
+
+    }
 }
 
 "usecase.GameUseCase" <|-- "usecase.gameUseCase"
+"repo.UserRepo" <|-- "usecase.userUseCase"
+"usecase.UserUseCase" <|-- "usecase.userUseCase"
 
+"usecase.GameUseCaseConfig" o-- "repo.GameRepo"
+"usecase.GameUseCaseConfig" o-- "repo.PlayerRepo"
 "usecase.gameUseCase" o-- "repo.GameRepo"
 "usecase.gameUseCase" o-- "repo.PlayerRepo"
 "usecase.gameUseCase" o-- "service.GameService"
+"usecase.userUseCase" o-- "repo.UserRepo"
 
+"__builtin__.uint" #.. "errors.CoreError"
 "__builtin__.uint" #.. "errors.GungiError"
 "__builtin__.uint" #.. "model.color"
 "__builtin__.uint" #.. "model.phase"
