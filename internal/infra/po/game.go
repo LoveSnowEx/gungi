@@ -52,7 +52,7 @@ type Game struct {
 
 type Piece struct {
 	gorm.Model
-	PeiceID uint
+	PieceID uint
 	GameID  uint
 	Type    PieceType
 	Color   Color

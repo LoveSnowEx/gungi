@@ -98,7 +98,7 @@ func (r *gameRepoImpl) Save(game model.Game) (err error) {
 				if piece := game.Board().Get(model.NewVector3D(x, y, z)); piece != nil {
 					piecePo := po.BoardPiece{
 						Piece: po.Piece{
-							PeiceID: piece.Id(),
+							PieceID: piece.Id(),
 							GameID:  gamePo.ID,
 							Type:    po.FromPieceType(piece.Type()),
 							Color:   po.FromColor(piece.Color()),
@@ -129,7 +129,7 @@ func (r *gameRepoImpl) Save(game model.Game) (err error) {
 		// Reserve
 		for _, piece := range game.Reserve(color).Pieces() {
 			piecePo := po.Piece{
-				PeiceID: piece.Id(),
+				PieceID: piece.Id(),
 				GameID:  gamePo.ID,
 				Type:    po.FromPieceType(piece.Type()),
 				Color:   po.FromColor(piece.Color()),
@@ -139,7 +139,7 @@ func (r *gameRepoImpl) Save(game model.Game) (err error) {
 		// Discard
 		for _, piece := range game.Discard(color).Pieces() {
 			piecePo := po.Piece{
-				PeiceID: piece.Id(),
+				PieceID: piece.Id(),
 				GameID:  gamePo.ID,
 				Type:    po.FromPieceType(piece.Type()),
 				Color:   po.FromColor(piece.Color()),
