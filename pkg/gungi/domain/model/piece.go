@@ -4,7 +4,7 @@ type PieceType interface {
 	isPieceType()
 }
 
-type pieceType int
+type pieceType uint
 
 func (t pieceType) isPieceType() {}
 

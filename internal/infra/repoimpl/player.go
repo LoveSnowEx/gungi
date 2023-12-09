@@ -1,14 +1,14 @@
 package persist
 
 import (
+	"github.com/LoveSnowEx/gungi/internal/infra/po"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/repo"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
 )
 
 var (
-	_             repo.PlayerRepo = (*playerRepoImpl)(nil)
-	playerStorage                 = make(map[uint]model.Player)
+	_ repo.PlayerRepo = (*playerRepoImpl)(nil)
 )
 
 type playerRepoImpl struct {
@@ -19,14 +19,24 @@ func NewPlayerRepo() repo.PlayerRepo {
 }
 
 func (r *playerRepoImpl) Find(id uint) (player model.Player, err error) {
-	player, ok := playerStorage[id]
-	if !ok {
+	userPo := po.User{}
+	if err != nil {
 		err = errors.ErrPlayerNotFound
+		return
 	}
-	return player, err
+	player = model.NewPlayer(userPo.Name)
+	player.SetId(userPo.Id)
+	return
 }
 
 func (r *playerRepoImpl) Save(player model.Player) (err error) {
-	playerStorage[player.Id()] = player
+	if player == nil {
+		err = errors.ErrInvalidPlayer
+		return
+	}
+	userPo := po.User{
+		Id:   player.Id(),
+		Name: player.Name(),
+	}
 	return
 }

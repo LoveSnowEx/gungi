@@ -1,0 +1,342 @@
+@startuml
+namespace errors {
+    class GungiError << (S,Aquamarine) >> {
+        + Error() string
+
+    }
+    class errors.GungiError << (T, #FF7700) >>  {
+    }
+}
+
+
+
+namespace model {
+    interface Board  {
+        + Board() [][][]Piece
+        + Get(loc Vector3D) Piece
+        + GetLocation(peice Piece) Vector3D
+        + Set(loc Vector3D, piece Piece) 
+        + Take(piece Piece) 
+
+    }
+    interface Color  {
+        - isColor() 
+
+        + Other() Color
+
+    }
+    interface Game  {
+        + Id() uint
+        + SetId(id uint) 
+        + Board() Board
+        + Reserve(color Color) PieceArea
+        + Discard(color Color) PieceArea
+        + Player(color Color) Player
+        + Join(color Color, player Player) error
+        + Leave(player Player) error
+        + CurrentTurn() Color
+        + SetCurrentTurn(color Color) 
+        + Phase() Phase
+        + SetPhase(phase Phase) 
+
+    }
+    interface Phase  {
+        - isPhase() 
+
+    }
+    interface Piece  {
+        + Id() uint
+        + Type() PieceType
+        + Color() Color
+
+    }
+    interface PieceArea  {
+        + Add(piece Piece) error
+        + Remove(piece Piece) error
+        + Contains(piece Piece) bool
+        + Pieces() []Piece
+
+    }
+    interface PieceType  {
+        - isPieceType() 
+
+    }
+    interface Player  {
+        + Id() uint
+        + SetId(id uint) 
+        + Name() string
+        + SetName(name string) 
+
+    }
+    interface Vector2D  {
+        + X() int
+        + Y() int
+
+    }
+    class Vector2DImpl << (S,Aquamarine) >> {
+        - x int
+        - y int
+
+        + X() int
+        + Y() int
+
+    }
+    interface Vector3D  {
+        + Z() int
+
+    }
+    class Vector3DImpl << (S,Aquamarine) >> {
+        - z int
+
+        + Z() int
+
+    }
+    class basePlayer << (S,Aquamarine) >> {
+        - id uint
+        - name string
+
+        + Id() uint
+        + SetId(id uint) 
+        + Name() string
+        + SetName(name string) 
+
+    }
+    class board << (S,Aquamarine) >> {
+        - board [][][]Piece
+        - locations <font color=blue>map</font>[Piece]Vector3D
+
+        + Board() [][][]Piece
+        + Get(loc Vector3D) Piece
+        + GetLocation(piece Piece) Vector3D
+        + Set(loc Vector3D, piece Piece) 
+        + Take(piece Piece) 
+
+    }
+    class color << (S,Aquamarine) >> {
+        - isColor() 
+
+        + Other() Color
+
+    }
+    class game << (S,Aquamarine) >> {
+        - id uint
+        - board Board
+        - reserve <font color=blue>map</font>[Color]PieceArea
+        - discard <font color=blue>map</font>[Color]PieceArea
+        - players <font color=blue>map</font>[Color]Player
+        - currentTurn Color
+        - phase Phase
+
+        + Id() uint
+        + SetId(id uint) 
+        + Board() Board
+        + Reserve(color Color) PieceArea
+        + Discard(color Color) PieceArea
+        + Player(color Color) Player
+        + Join(color Color, player Player) error
+        + Leave(player Player) error
+        + SetCurrentTurn(color Color) 
+        + CurrentTurn() Color
+        + SetPhase(phase Phase) 
+        + Phase() Phase
+
+    }
+    class model.color << (T, #FF7700) >>  {
+    }
+    class model.phase << (T, #FF7700) >>  {
+    }
+    class model.pieceType << (T, #FF7700) >>  {
+    }
+    class phase << (S,Aquamarine) >> {
+        - isPhase() 
+
+    }
+    class piece << (S,Aquamarine) >> {
+        - id uint
+        - pieceType PieceType
+        - color Color
+
+        + Id() uint
+        + Type() PieceType
+        + Color() Color
+
+    }
+    class pieceArea << (S,Aquamarine) >> {
+        - pieces 
+
+        + Add(piece Piece) error
+        + Remove(piece Piece) error
+        + Contains(piece Piece) bool
+        + Pieces() []Piece
+
+    }
+    class pieceType << (S,Aquamarine) >> {
+        - isPieceType() 
+
+    }
+    class player << (S,Aquamarine) >> {
+    }
+}
+"model.Vector2D" *-- "model.Vector3D"
+"model.Vector2DImpl" *-- "model.Vector3DImpl"
+"model.basePlayer" *-- "model.player"
+
+"model.Vector2D" <|-- "model.Vector2DImpl"
+"model.Vector3D" <|-- "model.Vector3DImpl"
+"model.Player" <|-- "model.basePlayer"
+"model.Board" <|-- "model.board"
+"model.Color" <|-- "model.color"
+"model.Game" <|-- "model.game"
+"model.Phase" <|-- "model.phase"
+"model.Piece" <|-- "model.piece"
+"model.PieceArea" <|-- "model.pieceArea"
+"model.PieceType" <|-- "model.pieceType"
+
+"model.board" o-- "model.Piece"
+"model.board" o-- "model.Vector3D"
+"model.game" o-- "model.Board"
+"model.game" o-- "model.Color"
+"model.game" o-- "model.Phase"
+"model.game" o-- "model.PieceArea"
+"model.game" o-- "model.Player"
+"model.piece" o-- "model.Color"
+"model.piece" o-- "model.PieceType"
+
+namespace persist {
+    class gameRepoImpl << (S,Aquamarine) >> {
+        + Find(id uint) (model.Game, error)
+        + Save(game model.Game) error
+
+    }
+    class playerRepoImpl << (S,Aquamarine) >> {
+        + Find(id uint) (model.Player, error)
+        + Save(player model.Player) error
+
+    }
+}
+
+"repo.GameRepo" <|-- "persist.gameRepoImpl"
+"repo.PlayerRepo" <|-- "persist.playerRepoImpl"
+
+
+namespace po {
+    class BoardPiece << (S,Aquamarine) >> {
+        + Row int
+        + Column int
+
+    }
+    class Game << (S,Aquamarine) >> {
+        + Id uint
+        + Players []Player
+        + BoardPieces []BoardPiece
+        + Reserve []Piece
+        + Discard []Piece
+        + CurrentTurn Color
+        + Phase Phase
+
+        + ToModel() (model.Game, error)
+
+    }
+    class Piece << (S,Aquamarine) >> {
+        + Id uint
+        + Type PieceType
+        + Color Color
+
+    }
+    class Player << (S,Aquamarine) >> {
+        + Id uint
+        + Name string
+        + Color Color
+
+    }
+    class po.Color << (T, #FF7700) >>  {
+    }
+    class po.Phase << (T, #FF7700) >>  {
+    }
+    class po.PieceType << (T, #FF7700) >>  {
+    }
+}
+"po.Piece" *-- "po.BoardPiece"
+
+
+"po.Game" o-- "po.BoardPiece"
+"po.Game" o-- "po.Color"
+"po.Game" o-- "po.Phase"
+"po.Game" o-- "po.Piece"
+"po.Game" o-- "po.Player"
+"po.Piece" o-- "po.Color"
+"po.Piece" o-- "po.PieceType"
+"po.Player" o-- "po.Color"
+
+namespace repo {
+    interface GameRepo  {
+        + Find(id uint) (model.Game, error)
+        + Save(game model.Game) error
+
+    }
+    interface PlayerRepo  {
+        + Find(id uint) (model.Player, error)
+        + Save(player model.Player) error
+
+    }
+}
+
+
+
+namespace service {
+    interface GameService  {
+        + Create() model.Game
+        + Join(game model.Game, player model.Player, team model.Color) error
+        + Leave(game model.Game, player model.Player) error
+        + Start(game model.Game, pieceAmounts <font color=blue>map</font>[model.PieceType]int) error
+
+    }
+    class gameService << (S,Aquamarine) >> {
+        + Create() model.Game
+        + Join(game model.Game, player model.Player, color model.Color) error
+        + Leave(game model.Game, player model.Player) error
+        + Start(game model.Game, pieceAmounts <font color=blue>map</font>[model.PieceType]int) error
+
+    }
+}
+
+"service.GameService" <|-- "service.gameService"
+
+
+namespace usecase {
+    interface GameUseCase  {
+        + CreateGame() (model.Game, error)
+        + FindGame(id uint) (model.Game, error)
+        + JoinGame(gameId uint, playerId uint, color model.Color) error
+        + LeaveGame(gameId uint, playerId uint) error
+        + StartGame(gameId uint) error
+
+    }
+    class gameUseCase << (S,Aquamarine) >> {
+        - gameRepo repo.GameRepo
+        - gameService service.GameService
+        - playerRepo repo.PlayerRepo
+
+        + CreateGame() (model.Game, error)
+        + FindGame(id uint) (model.Game, error)
+        + JoinGame(gameId uint, playerId uint, color model.Color) error
+        + LeaveGame(gameId uint, playerId uint) error
+        + StartGame(gameId uint) error
+
+    }
+}
+
+"usecase.GameUseCase" <|-- "usecase.gameUseCase"
+
+"usecase.gameUseCase" o-- "repo.GameRepo"
+"usecase.gameUseCase" o-- "repo.PlayerRepo"
+"usecase.gameUseCase" o-- "service.GameService"
+
+"__builtin__.uint" #.. "errors.GungiError"
+"__builtin__.uint" #.. "model.color"
+"__builtin__.uint" #.. "model.phase"
+"__builtin__.uint" #.. "model.pieceType"
+"__builtin__.uint" #.. "po.Color"
+"__builtin__.uint" #.. "po.Phase"
+"__builtin__.uint" #.. "po.PieceType"
+@enduml

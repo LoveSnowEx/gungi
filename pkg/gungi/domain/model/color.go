@@ -5,7 +5,7 @@ type Color interface {
 	Other() Color
 }
 
-type color int
+type color uint
 
 const (
 	White color = iota

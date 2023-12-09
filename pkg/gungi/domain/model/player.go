@@ -28,24 +28,12 @@ func (p *basePlayer) SetName(name string) {
 	p.name = name
 }
 
-type humanPlayer struct {
+type player struct {
 	basePlayer
 }
 
-func NewHumanPlayer(name string) Player {
-	return &humanPlayer{
-		basePlayer: basePlayer{
-			name: name,
-		},
-	}
-}
-
-type aiPlayer struct {
-	basePlayer
-}
-
-func NewAIPlayer(name string) Player {
-	return &aiPlayer{
+func NewPlayer(name string) Player {
+	return &player{
 		basePlayer: basePlayer{
 			name: name,
 		},

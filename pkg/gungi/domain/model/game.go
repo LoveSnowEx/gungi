@@ -6,7 +6,7 @@ type Phase interface {
 	isPhase()
 }
 
-type phase int
+type phase uint
 
 func (p phase) isPhase() {}
 
