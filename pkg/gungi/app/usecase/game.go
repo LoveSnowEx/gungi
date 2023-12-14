@@ -8,12 +8,16 @@ import (
 	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
 )
 
-type GameUseCaseConfig struct {
+var (
+	_ GameUsecase = (*gameUsecase)(nil)
+)
+
+type GameUsecaseConfig struct {
 	GameRepo   repo.GameRepo
 	PlayerRepo repo.PlayerRepo
 }
 
-type GameUseCase interface {
+type GameUsecase interface {
 	// CreateGame creates a new game.
 	CreateGame() (model.Game, error)
 	// FindGame finds a game by id.
@@ -26,21 +30,21 @@ type GameUseCase interface {
 	StartGame(gameId uint) error
 }
 
-type gameUseCase struct {
+type gameUsecase struct {
 	gameService service.GameService
 	gameRepo    repo.GameRepo
 	playerRepo  repo.PlayerRepo
 }
 
-func NewGameUseCase(config *GameUseCaseConfig) GameUseCase {
-	return &gameUseCase{
+func NewGameUsecase(config *GameUsecaseConfig) GameUsecase {
+	return &gameUsecase{
 		gameService: service.NewGameService(),
 		gameRepo:    config.GameRepo,
 		playerRepo:  config.PlayerRepo,
 	}
 }
 
-func (u *gameUseCase) CreateGame() (game model.Game, err error) {
+func (u *gameUsecase) CreateGame() (game model.Game, err error) {
 	if u == nil || u.gameRepo == nil || u.gameService == nil || u.playerRepo == nil {
 		err = errors.ErrInvalidService
 		return
@@ -53,11 +57,11 @@ func (u *gameUseCase) CreateGame() (game model.Game, err error) {
 	return
 }
 
-func (u *gameUseCase) FindGame(id uint) (model.Game, error) {
+func (u *gameUsecase) FindGame(id uint) (model.Game, error) {
 	return u.gameRepo.Find(id)
 }
 
-func (u *gameUseCase) JoinGame(gameId uint, playerId uint, color model.Color) (err error) {
+func (u *gameUsecase) JoinGame(gameId uint, playerId uint, color model.Color) (err error) {
 	var game model.Game
 	game, err = u.gameRepo.Find(gameId)
 	if err != nil {
@@ -74,7 +78,7 @@ func (u *gameUseCase) JoinGame(gameId uint, playerId uint, color model.Color) (e
 	return
 }
 
-func (u *gameUseCase) LeaveGame(gameId uint, playerId uint) (err error) {
+func (u *gameUsecase) LeaveGame(gameId uint, playerId uint) (err error) {
 	game, err := u.gameRepo.Find(gameId)
 	if err != nil {
 		return
@@ -90,7 +94,7 @@ func (u *gameUseCase) LeaveGame(gameId uint, playerId uint) (err error) {
 	return
 }
 
-func (u *gameUseCase) StartGame(gameId uint) (err error) {
+func (u *gameUsecase) StartGame(gameId uint) (err error) {
 	var game model.Game
 	if game, err = u.gameRepo.Find(gameId); err != nil {
 		return

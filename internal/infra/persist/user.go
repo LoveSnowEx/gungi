@@ -6,8 +6,8 @@ import (
 	"github.com/LoveSnowEx/gungi/internal/infra/dal"
 	"github.com/LoveSnowEx/gungi/internal/infra/po"
 	"github.com/LoveSnowEx/gungi/pkg/core/domain/model"
+	"github.com/LoveSnowEx/gungi/pkg/core/domain/repo"
 	"github.com/LoveSnowEx/gungi/pkg/core/errors"
-	"github.com/LoveSnowEx/gungi/pkg/core/repo"
 )
 
 var (
@@ -28,15 +28,19 @@ func (r *userRepoImpl) Find(id uint) (user model.User, err error) {
 		err = errors.ErrUserNotFound
 	}
 	user = model.NewUser(userPo.Name)
-	user.SetId(uint(userPo.ID))
+	user.SetId(userPo.ID)
 	return
 }
 
-func (r *userRepoImpl) Create(name string) (user model.User, err error) {
+func (r *userRepoImpl) Create(user model.User) (err error) {
 	userPo := po.User{
-		Name: name,
+		Name: user.Name(),
 	}
 	u := dal.User
 	err = u.WithContext(context.Background()).Create(&userPo)
+	if err != nil {
+		return
+	}
+	user.SetId(userPo.ID)
 	return
 }

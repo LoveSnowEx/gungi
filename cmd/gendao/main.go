@@ -9,7 +9,7 @@ import (
 func main() {
 	// Initialize the generator with configuration
 	g := gen.NewGenerator(gen.Config{
-		OutPath:       "./internal/infra/dal", // output directory, default value is ./query
+		OutPath:       "../../internal/infra/dal", // output directory, default value is ./query
 		ModelPkgPath:  "po",
 		Mode:          gen.WithDefaultQuery | gen.WithQueryInterface,
 		FieldNullable: true,

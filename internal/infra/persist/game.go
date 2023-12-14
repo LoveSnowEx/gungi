@@ -2,12 +2,14 @@ package persist
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/LoveSnowEx/gungi/internal/infra/dal"
 	"github.com/LoveSnowEx/gungi/internal/infra/po"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/repo"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
+	"gorm.io/gorm"
 )
 
 var (
@@ -26,9 +28,20 @@ func NewGameRepo() repo.GameRepo {
 
 func (r *gameRepoImpl) Find(id uint) (game model.Game, err error) {
 	g := dal.Game
-	gamePo, err := g.WithContext(context.Background()).Where(g.ID.Eq(id)).Preload(g.Players).First()
+	gamePo, err := g.
+		WithContext(context.Background()).
+		Where(g.ID.Eq(id)).
+		Preload(g.Players).
+		Preload(g.Players.User.RelationField).
+		Preload(g.BoardPieces).
+		Preload(g.Reserve).
+		Preload(g.Discard).
+		First()
 	if err != nil {
-		err = errors.ErrGameNotFound
+		if err == gorm.ErrRecordNotFound {
+			slog.Warn("game not found", "id", id)
+			err = errors.ErrGameNotFound
+		}
 		return
 	}
 	game = model.NewGame()
@@ -48,12 +61,12 @@ func (r *gameRepoImpl) Find(id uint) (game model.Game, err error) {
 	}
 	// Board
 	for _, piecePo := range gamePo.BoardPieces {
-		piece := model.NewPiece(piecePo.ID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
+		piece := model.NewPiece(piecePo.PieceID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
 		game.Board().Set(model.NewVector3D(piecePo.Row, piecePo.Column, 0), piece)
 	}
 	// Reserve
 	for _, piecePo := range gamePo.Reserve {
-		piece := model.NewPiece(piecePo.ID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
+		piece := model.NewPiece(piecePo.PieceID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
 		if err = game.Reserve(po.ToColor(piecePo.Color)).Add(piece); err != nil {
 			game = nil
 			return
@@ -61,7 +74,7 @@ func (r *gameRepoImpl) Find(id uint) (game model.Game, err error) {
 	}
 	// Discard
 	for _, piecePo := range gamePo.Discard {
-		piece := model.NewPiece(piecePo.ID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
+		piece := model.NewPiece(piecePo.PieceID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
 		if err = game.Discard(po.ToColor(piecePo.Color)).Add(piece); err != nil {
 			game = nil
 			return
@@ -84,12 +97,15 @@ func (r *gameRepoImpl) Save(game model.Game) (err error) {
 		CurrentTurn: po.FromColor(game.CurrentTurn()),
 		Phase:       po.FromPhase(game.Phase()),
 	}
+
+	// Setup ID
 	if game.Id() != 0 {
 		gamePo.ID = game.Id()
-	}
-	err = g.WithContext(context.Background()).Save(&gamePo)
-	if err != nil {
-		return
+	} else {
+		err = g.WithContext(context.Background()).Save(&gamePo)
+		if err != nil {
+			return
+		}
 	}
 	// Board
 	for x := range [model.BoardRows]struct{}{} {
@@ -148,5 +164,9 @@ func (r *gameRepoImpl) Save(game model.Game) (err error) {
 		}
 	}
 	err = g.WithContext(context.Background()).Save(&gamePo)
+	if err != nil {
+		return
+	}
+	game.SetId(gamePo.ID)
 	return
 }

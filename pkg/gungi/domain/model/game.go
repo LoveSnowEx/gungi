@@ -105,7 +105,7 @@ func (g game) Player(color Color) Player {
 
 func (g *game) Join(color Color, player Player) (err error) {
 	for _, c := range Colors() {
-		if g.Player(c).Id() == player.Id() {
+		if g.Player(c) != nil && g.Player(c).Id() == player.Id() {
 			err = errors.ErrPlayerAlreadyJoined
 			return
 		}

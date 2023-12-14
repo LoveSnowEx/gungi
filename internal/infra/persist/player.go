@@ -28,6 +28,6 @@ func (r *playerRepoImpl) Find(id uint) (player model.Player, err error) {
 		return
 	}
 	player = model.NewPlayer(userPo.Name)
-	player.SetId(uint(userPo.ID))
+	player.SetId(userPo.ID)
 	return
 }

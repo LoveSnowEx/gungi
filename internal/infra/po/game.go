@@ -51,24 +51,30 @@ type Game struct {
 }
 
 type Piece struct {
-	gorm.Model
-	PieceID uint
-	GameID  uint
+	PieceID uint `gorm:"primaryKey"`
+	GameID  uint `gorm:"primaryKey"`
 	Type    PieceType
 	Color   Color
 }
 
 type BoardPiece struct {
-	Piece
+	Piece  `gorm:"embedded"`
 	Row    int
 	Column int
 	Level  int
 }
 
+type ReservePiece struct {
+	Piece `gorm:"embedded"`
+}
+
+type DiscardPiece struct {
+	Piece `gorm:"embedded"`
+}
+
 type Player struct {
-	gorm.Model
-	GameID uint
-	UserID uint
+	GameID uint `gorm:"primaryKey"`
+	UserID uint `gorm:"primaryKey"`
 	User   User
 	Color  Color
 }
