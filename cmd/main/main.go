@@ -1,15 +1,17 @@
 package main
 
 import (
-	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/persist"
 	core "github.com/LoveSnowEx/gungi/pkg/core/app/usecase"
 	gungi "github.com/LoveSnowEx/gungi/pkg/gungi/app/usecase"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
+
+	"github.com/LoveSnowEx/gungi/internal/bootstrap"
 )
 
 func main() {
-	database.Init()
+	bootstrap.SetupSlog()
+	bootstrap.SetupDB()
 	return
 	coreApp := core.NewUserUsecase(&core.UserUsecaseConfig{
 		UserRepo: persist.NewUserRepo(),

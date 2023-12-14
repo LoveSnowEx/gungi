@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/LoveSnowEx/gungi/config"
+	"github.com/LoveSnowEx/gungi/internal/bootstrap"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/persist"
 	coremodel "github.com/LoveSnowEx/gungi/pkg/core/domain/model"
@@ -20,11 +21,13 @@ func setup() {
 	}
 	source := filepath.Join("tmp", u.String()+".db")
 	config.Database.SetSource(source)
-	database.Init()
+	bootstrap.SetupSlog()
+	bootstrap.SetupDB()
 }
 
 func teardown() {
-	database.Close()
+	sqlDB, _ := database.Default().DB()
+	sqlDB.Close()
 	_ = os.Remove(config.Database.Source())
 }
 
