@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"bufio"
 	"log"
 	"log/slog"
 	"os"
@@ -18,8 +17,7 @@ func Slog() *slog.Logger {
 	if sloglogger != nil {
 		return sloglogger
 	}
-
-	w := bufio.NewWriter(os.Stdout)
+	w := os.Stdout
 	sloglogger = slog.New(slog.NewTextHandler(
 		w,
 		&slog.HandlerOptions{
@@ -33,8 +31,8 @@ func Gorm() logger.Interface {
 	if gormlogger != nil {
 		return gormlogger
 	}
-	w := bufio.NewWriter(os.Stdout)
-	l := log.New(w, "", log.Lshortfile)
+	w := os.Stdout
+	l := log.New(w, "", log.Lshortfile|log.Ltime)
 	gormlogger = logger.New(l, logger.Config{
 		Colorful: true,
 		LogLevel: logger.Info,
