@@ -92,8 +92,8 @@ func (r *gameRepoImpl) Save(game model.Game) (err error) {
 	gamePo := po.Game{
 		Players:     make([]po.Player, 0),
 		BoardPieces: make([]po.BoardPiece, 0),
-		Reserve:     make([]po.Piece, 0),
-		Discard:     make([]po.Piece, 0),
+		Reserve:     make([]po.ReservePiece, 0),
+		Discard:     make([]po.DiscardPiece, 0),
 		CurrentTurn: po.FromColor(game.CurrentTurn()),
 		Phase:       po.FromPhase(game.Phase()),
 	}
@@ -144,21 +144,25 @@ func (r *gameRepoImpl) Save(game model.Game) (err error) {
 		}
 		// Reserve
 		for _, piece := range game.Reserve(color).Pieces() {
-			piecePo := po.Piece{
-				PieceID: piece.Id(),
-				GameID:  gamePo.ID,
-				Type:    po.FromPieceType(piece.Type()),
-				Color:   po.FromColor(piece.Color()),
+			piecePo := po.ReservePiece{
+				Piece: po.Piece{
+					PieceID: piece.Id(),
+					GameID:  gamePo.ID,
+					Type:    po.FromPieceType(piece.Type()),
+					Color:   po.FromColor(piece.Color()),
+				},
 			}
 			gamePo.Reserve = append(gamePo.Reserve, piecePo)
 		}
 		// Discard
 		for _, piece := range game.Discard(color).Pieces() {
-			piecePo := po.Piece{
-				PieceID: piece.Id(),
-				GameID:  gamePo.ID,
-				Type:    po.FromPieceType(piece.Type()),
-				Color:   po.FromColor(piece.Color()),
+			piecePo := po.DiscardPiece{
+				Piece: po.Piece{
+					PieceID: piece.Id(),
+					GameID:  gamePo.ID,
+					Type:    po.FromPieceType(piece.Type()),
+					Color:   po.FromColor(piece.Color()),
+				},
 			}
 			gamePo.Discard = append(gamePo.Discard, piecePo)
 		}

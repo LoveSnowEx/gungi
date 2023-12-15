@@ -41,7 +41,6 @@ func SetupDB() {
 		&po.User{},
 		&po.Game{},
 		&po.Player{},
-		&po.Piece{},
 		&po.BoardPiece{},
 		&po.ReservePiece{},
 		&po.DiscardPiece{},

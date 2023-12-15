@@ -44,15 +44,15 @@ type Game struct {
 	gorm.Model
 	Players     []Player
 	BoardPieces []BoardPiece
-	Reserve     []Piece
-	Discard     []Piece
+	Reserve     []ReservePiece
+	Discard     []DiscardPiece
 	CurrentTurn Color
 	Phase       Phase
 }
 
 type Piece struct {
-	PieceID uint `gorm:"primaryKey"`
 	GameID  uint `gorm:"primaryKey"`
+	PieceID uint `gorm:"primaryKey"`
 	Type    PieceType
 	Color   Color
 }
