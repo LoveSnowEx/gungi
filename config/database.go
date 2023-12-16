@@ -4,11 +4,6 @@ import (
 	"path/filepath"
 
 	"github.com/LoveSnowEx/gungi/tool/pathtool"
-	"github.com/spf13/viper"
-)
-
-var (
-	Database DatabaseConfig
 )
 
 type DatabaseConfig interface {
@@ -26,12 +21,4 @@ func (c *databaseConfig) Source() string {
 
 func (c *databaseConfig) SetSource(source string) {
 	c.source = filepath.Join(pathtool.ProjectRoot(), source)
-}
-
-func init() {
-	viper.SetDefault("database.source", "gungi.db")
-	viper.AutomaticEnv()
-
-	Database = &databaseConfig{}
-	Database.SetSource(viper.GetString("database.source"))
 }
