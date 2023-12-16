@@ -1,3 +1,6 @@
+[database]
+source = "database/gungi.db"
+
 [logger.slog]
 path = "log/slog.log"
 append = true
