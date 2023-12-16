@@ -1,11 +1,20 @@
 package filetool
 
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
-func Create(name string) (f *os.File, err error) {
-	err = os.MkdirAll(name, os.ModeDir)
+func Open(name string, append bool) (f *os.File, err error) {
+	err = os.MkdirAll(filepath.Dir(name), os.ModeDir|0755)
 	if err != nil {
 		return
 	}
-	return os.Create(name)
+	flag := os.O_RDWR | os.O_CREATE
+	if append {
+		flag |= os.O_APPEND
+	} else {
+		flag |= os.O_TRUNC
+	}
+	return os.OpenFile(name, flag, 0666)
 }
