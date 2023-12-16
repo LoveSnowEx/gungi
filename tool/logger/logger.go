@@ -3,6 +3,7 @@ package logger
 import (
 	"log"
 	"log/slog"
+	"os"
 
 	"github.com/LoveSnowEx/gungi/config"
 	"gorm.io/gorm/logger"
@@ -34,7 +35,7 @@ func Gorm() logger.Interface {
 	w := config.Logger.Get("gorm")
 	l := log.New(w, "", log.Lshortfile|log.Ltime)
 	gormlogger = logger.New(l, logger.Config{
-		Colorful: true,
+		Colorful: w == os.Stdout,
 		LogLevel: logger.Info,
 	})
 	return gormlogger
