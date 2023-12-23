@@ -6,6 +6,7 @@ import (
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/repo"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/service"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
+	"github.com/gookit/event"
 )
 
 var (
@@ -13,8 +14,9 @@ var (
 )
 
 type GameUsecaseConfig struct {
-	GameRepo   repo.GameRepo
-	PlayerRepo repo.PlayerRepo
+	GameRepo     repo.GameRepo
+	PlayerRepo   repo.PlayerRepo
+	EventManager event.ManagerFace
 }
 
 type GameUsecase interface {
@@ -31,16 +33,18 @@ type GameUsecase interface {
 }
 
 type gameUsecase struct {
-	gameService service.GameService
-	gameRepo    repo.GameRepo
-	playerRepo  repo.PlayerRepo
+	gameService  service.GameService
+	gameRepo     repo.GameRepo
+	playerRepo   repo.PlayerRepo
+	eventManager event.ManagerFace
 }
 
 func NewGameUsecase(config *GameUsecaseConfig) GameUsecase {
 	return &gameUsecase{
-		gameService: service.NewGameService(),
-		gameRepo:    config.GameRepo,
-		playerRepo:  config.PlayerRepo,
+		gameService:  service.NewGameService(),
+		gameRepo:     config.GameRepo,
+		playerRepo:   config.PlayerRepo,
+		eventManager: config.EventManager,
 	}
 }
 
@@ -74,7 +78,12 @@ func (u *gameUsecase) JoinGame(gameId uint, playerId uint, color model.Color) (e
 	if err = u.gameService.Join(game, player, color); err != nil {
 		return
 	}
-	err = u.gameRepo.Save(game)
+	if err = u.gameRepo.Save(game); err != nil {
+		return
+	}
+	if err, _ = u.eventManager.Fire("game.update.playerjoin", nil); err != nil {
+		return
+	}
 	return
 }
 
@@ -90,7 +99,12 @@ func (u *gameUsecase) LeaveGame(gameId uint, playerId uint) (err error) {
 	if err = u.gameService.Leave(game, player); err != nil {
 		return
 	}
-	err = u.gameRepo.Save(game)
+	if err = u.gameRepo.Save(game); err != nil {
+		return
+	}
+	if err, _ = u.eventManager.Fire("game.update.playerleave", nil); err != nil {
+		return
+	}
 	return
 }
 
@@ -102,6 +116,11 @@ func (u *gameUsecase) StartGame(gameId uint) (err error) {
 	if err = u.gameService.Start(game, config.PieceAmounts); err != nil {
 		return
 	}
-	err = u.gameRepo.Save(game)
+	if err = u.gameRepo.Save(game); err != nil {
+		return
+	}
+	if err, _ = u.eventManager.Fire("game.update.start", nil); err != nil {
+		return
+	}
 	return
 }

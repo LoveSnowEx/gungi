@@ -4,6 +4,7 @@ go 1.21.0
 
 require (
 	github.com/google/uuid v1.4.0
+	github.com/gookit/event v1.1.1
 	github.com/spf13/viper v1.18.1
 	gorm.io/driver/sqlite v1.5.4
 	gorm.io/gen v0.3.24

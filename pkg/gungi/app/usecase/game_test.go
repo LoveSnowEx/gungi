@@ -1,17 +1,21 @@
 package usecase
 
 import (
+	"log/slog"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"testing"
 
 	"github.com/LoveSnowEx/gungi/config"
 	"github.com/LoveSnowEx/gungi/internal/bootstrap"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
+	"github.com/LoveSnowEx/gungi/internal/infra/notification"
 	"github.com/LoveSnowEx/gungi/internal/infra/persist"
 	coremodel "github.com/LoveSnowEx/gungi/pkg/core/domain/model"
 	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
 	"github.com/google/uuid"
+	"github.com/gookit/event"
 )
 
 func setup() {
@@ -33,8 +37,8 @@ func teardown() {
 
 func TestMain(m *testing.M) {
 	defer func() {
-		err := recover()
-		if err != nil {
+		if err := recover(); err != nil {
+			slog.Debug("Panic!", "err", err, "stacktrace", string(debug.Stack()))
 			teardown()
 			panic(err)
 		}
@@ -46,8 +50,9 @@ func TestMain(m *testing.M) {
 
 func NewFakeGameUsecase() GameUsecase {
 	return NewGameUsecase(&GameUsecaseConfig{
-		GameRepo:   persist.NewGameRepo(),
-		PlayerRepo: persist.NewPlayerRepo(),
+		GameRepo:     persist.NewGameRepo(),
+		PlayerRepo:   persist.NewPlayerRepo(),
+		EventManager: notification.NewGameManager(),
 	})
 }
 
@@ -111,6 +116,12 @@ func Test_gameUsecase_StartGame(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			updateCount := 0
+			expectedUpdateCount := 0
+			notification.NewGameManager().AddListener("game.update.*", event.ListenerFunc(func(_ event.Event) error {
+				updateCount++
+				return nil
+			}))
 			u := NewFakeGameUsecase()
 			game, err := u.CreateGame()
 			if err != nil {
@@ -128,9 +139,14 @@ func Test_gameUsecase_StartGame(t *testing.T) {
 					t.Errorf("gameService.JoinGame() error = %v", err)
 					return
 				}
+				expectedUpdateCount++
 			}
 			if err := u.StartGame(game.Id()); (err != nil) != tt.wantErr {
 				t.Errorf("gameService.StartGame() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			expectedUpdateCount++
+			if updateCount != expectedUpdateCount && !tt.wantErr {
+				t.Errorf("gameService should have fired %v events, but fired %v", expectedUpdateCount, updateCount)
 			}
 		})
 	}
