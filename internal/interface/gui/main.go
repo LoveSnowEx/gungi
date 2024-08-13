@@ -2,11 +2,18 @@ package gui
 
 import "github.com/hajimehoshi/ebiten/v2"
 
+const (
+	windowWidth  = 1280
+	windowHeight = 720
+	tps          = 1
+	title        = "Gungi"
+)
+
 func Run() (err error) {
-	ebiten.SetWindowSize(1280, 720)
-	ebiten.SetTPS(1)
+	ebiten.SetWindowSize(windowWidth, windowHeight)
+	ebiten.SetTPS(tps)
 	ebiten.SetScreenClearedEveryFrame(true)
-	ebiten.SetWindowTitle("Hello, World!")
+	ebiten.SetWindowTitle(title)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	game := newGame()
 	return ebiten.RunGame(game)
