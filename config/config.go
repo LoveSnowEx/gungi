@@ -24,9 +24,6 @@ func init() {
 		panic(err)
 	}
 
-	tmp := viper.AllSettings()
-	_ = tmp
-
 	// database
 	viper.SetDefault("database.source", "gungi.db")
 	Database = &databaseConfig{}
