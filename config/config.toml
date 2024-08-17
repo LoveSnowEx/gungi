@@ -1,0 +1,10 @@
+[database]
+source = "database/gungi.db"
+
+[logger.slog]
+path = "log/slog.log"
+append = true
+
+[logger.gorm]
+path = "log/gorm.log"
+append = false

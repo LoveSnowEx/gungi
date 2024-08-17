@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/LoveSnowEx/gungi/pkg/gungi"
+	"github.com/LoveSnowEx/gungi/internal/bootstrap"
 )
 
 func main() {
-	gungi.NewGame()
+	bootstrap.SetupSlog()
+	bootstrap.SetupDB()
 }
