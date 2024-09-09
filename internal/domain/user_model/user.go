@@ -1,4 +1,4 @@
-package model
+package user_model
 
 type User interface {
 	Id() uint

@@ -1,4 +1,4 @@
-package usecase
+package gungi_usecase
 
 import (
 	"log/slog"
@@ -9,11 +9,11 @@ import (
 
 	"github.com/LoveSnowEx/gungi/config"
 	"github.com/LoveSnowEx/gungi/internal/bootstrap"
+	"github.com/LoveSnowEx/gungi/internal/domain/gungi_model"
+	"github.com/LoveSnowEx/gungi/internal/domain/user_model"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/notification"
 	"github.com/LoveSnowEx/gungi/internal/infra/persist"
-	coremodel "github.com/LoveSnowEx/gungi/pkg/core/domain/model"
-	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
 	"github.com/google/uuid"
 	"github.com/gookit/event"
 )
@@ -56,7 +56,7 @@ func NewFakeGameUsecase() GameUsecase {
 	})
 }
 
-func MakeFakeUsers(users ...coremodel.User) (err error) {
+func MakeFakeUsers(users ...user_model.User) (err error) {
 	for _, user := range users {
 		if err = persist.NewUserRepo().Create(user); err != nil {
 			return
@@ -92,7 +92,7 @@ func Test_gameUsecase_StartGame(t *testing.T) {
 	tests := []struct {
 		name        string
 		playernames []string
-		colors      []model.Color
+		colors      []gungi_model.Color
 		wantErr     bool
 	}{
 		{
@@ -101,16 +101,16 @@ func Test_gameUsecase_StartGame(t *testing.T) {
 				"test player 1",
 				"test player 2",
 			},
-			colors: []model.Color{
-				model.White,
-				model.Black,
+			colors: []gungi_model.Color{
+				gungi_model.White,
+				gungi_model.Black,
 			},
 			wantErr: false,
 		},
 		{
 			name:        "StartGameWithInvalidPlayers",
 			playernames: []string{},
-			colors:      []model.Color{},
+			colors:      []gungi_model.Color{},
 			wantErr:     true,
 		},
 	}
@@ -129,7 +129,7 @@ func Test_gameUsecase_StartGame(t *testing.T) {
 				return
 			}
 			for i, playername := range tt.playernames {
-				user := coremodel.NewUser(playername)
+				user := user_model.NewUser(playername)
 				err = MakeFakeUsers(user)
 				if err != nil {
 					t.Errorf("MakeFakeUsers() error = %v", err)

@@ -1,7 +1,7 @@
-package model
+package gungi_model
 
 import (
-	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
+	"github.com/LoveSnowEx/gungi/internal/const/gungi_errors"
 	"k8s.io/apimachinery/pkg/util/sets"
 )
 
@@ -28,7 +28,7 @@ func NewPieceArea() PieceArea {
 
 func (a *pieceArea) Add(piece Piece) (err error) {
 	if a.Contains(piece) {
-		return errors.ErrPieceAlreadyExists
+		return gungi_errors.ErrPieceAlreadyExists
 	}
 	a.pieces.Insert(piece)
 	return
@@ -36,7 +36,7 @@ func (a *pieceArea) Add(piece Piece) (err error) {
 
 func (a *pieceArea) Remove(piece Piece) (err error) {
 	if !a.Contains(piece) {
-		return errors.ErrPieceNotFound
+		return gungi_errors.ErrPieceNotFound
 	}
 	a.pieces.Delete(piece)
 	return

@@ -1,4 +1,4 @@
-package model
+package gungi_model
 
 type Vector2D interface {
 	X() int

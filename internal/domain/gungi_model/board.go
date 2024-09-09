@@ -1,4 +1,4 @@
-package model
+package gungi_model
 
 const (
 	BoardRows   = 9

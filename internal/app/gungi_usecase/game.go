@@ -1,11 +1,12 @@
-package usecase
+package gungi_usecase
 
 import (
 	"github.com/LoveSnowEx/gungi/config"
-	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
-	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/repo"
-	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/service"
-	"github.com/LoveSnowEx/gungi/pkg/gungi/errors"
+	"github.com/LoveSnowEx/gungi/internal/const/gungi_errors"
+	"github.com/LoveSnowEx/gungi/internal/domain/gungi_model"
+	"github.com/LoveSnowEx/gungi/internal/domain/gungi_repo"
+	"github.com/LoveSnowEx/gungi/internal/domain/gungi_service"
+
 	"github.com/gookit/event"
 )
 
@@ -14,18 +15,18 @@ var (
 )
 
 type GameUsecaseConfig struct {
-	GameRepo     repo.GameRepo
-	PlayerRepo   repo.PlayerRepo
+	GameRepo     gungi_repo.GameRepo
+	PlayerRepo   gungi_repo.PlayerRepo
 	EventManager event.ManagerFace
 }
 
 type GameUsecase interface {
 	// CreateGame creates a new game.
-	CreateGame() (model.Game, error)
+	CreateGame() (gungi_model.Game, error)
 	// FindGame finds a game by id.
-	FindGame(id uint) (model.Game, error)
+	FindGame(id uint) (gungi_model.Game, error)
 	// JoinGame adds a player to the game.
-	JoinGame(gameId uint, playerId uint, color model.Color) error
+	JoinGame(gameId uint, playerId uint, color gungi_model.Color) error
 	// LeaveGame removes a player from the game.
 	LeaveGame(gameId uint, playerId uint) error
 	// StartGame starts the game.
@@ -33,24 +34,24 @@ type GameUsecase interface {
 }
 
 type gameUsecase struct {
-	gameService  service.GameService
-	gameRepo     repo.GameRepo
-	playerRepo   repo.PlayerRepo
+	gameService  gungi_service.GameService
+	gameRepo     gungi_repo.GameRepo
+	playerRepo   gungi_repo.PlayerRepo
 	eventManager event.ManagerFace
 }
 
 func NewGameUsecase(config *GameUsecaseConfig) GameUsecase {
 	return &gameUsecase{
-		gameService:  service.NewGameService(),
+		gameService:  gungi_service.NewGameService(),
 		gameRepo:     config.GameRepo,
 		playerRepo:   config.PlayerRepo,
 		eventManager: config.EventManager,
 	}
 }
 
-func (u *gameUsecase) CreateGame() (game model.Game, err error) {
+func (u *gameUsecase) CreateGame() (game gungi_model.Game, err error) {
 	if u == nil || u.gameRepo == nil || u.gameService == nil || u.playerRepo == nil {
-		err = errors.ErrInvalidService
+		err = gungi_errors.ErrInvalidService
 		return
 	}
 	game = u.gameService.Create()
@@ -61,17 +62,17 @@ func (u *gameUsecase) CreateGame() (game model.Game, err error) {
 	return
 }
 
-func (u *gameUsecase) FindGame(id uint) (model.Game, error) {
+func (u *gameUsecase) FindGame(id uint) (gungi_model.Game, error) {
 	return u.gameRepo.Find(id)
 }
 
-func (u *gameUsecase) JoinGame(gameId uint, playerId uint, color model.Color) (err error) {
-	var game model.Game
+func (u *gameUsecase) JoinGame(gameId uint, playerId uint, color gungi_model.Color) (err error) {
+	var game gungi_model.Game
 	game, err = u.gameRepo.Find(gameId)
 	if err != nil {
 		return
 	}
-	var player model.Player
+	var player gungi_model.Player
 	if player, err = u.playerRepo.Find(playerId); err != nil {
 		return
 	}
@@ -92,7 +93,7 @@ func (u *gameUsecase) LeaveGame(gameId uint, playerId uint) (err error) {
 	if err != nil {
 		return
 	}
-	var player model.Player
+	var player gungi_model.Player
 	if player, err = u.playerRepo.Find(playerId); err != nil {
 		return
 	}
@@ -109,7 +110,7 @@ func (u *gameUsecase) LeaveGame(gameId uint, playerId uint) (err error) {
 }
 
 func (u *gameUsecase) StartGame(gameId uint) (err error) {
-	var game model.Game
+	var game gungi_model.Game
 	if game, err = u.gameRepo.Find(gameId); err != nil {
 		return
 	}

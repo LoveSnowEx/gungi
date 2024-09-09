@@ -1,4 +1,4 @@
-package model
+package gungi_model
 
 type Player interface {
 	Id() uint

@@ -1,6 +1,6 @@
-package model
+package gungi_model
 
-import "github.com/LoveSnowEx/gungi/pkg/gungi/errors"
+import "github.com/LoveSnowEx/gungi/internal/const/gungi_errors"
 
 type Phase interface {
 	isPhase()
@@ -106,12 +106,12 @@ func (g game) Player(color Color) Player {
 func (g *game) Join(color Color, player Player) (err error) {
 	for _, c := range Colors() {
 		if g.Player(c) != nil && g.Player(c).Id() == player.Id() {
-			err = errors.ErrPlayerAlreadyJoined
+			err = gungi_errors.ErrPlayerAlreadyJoined
 			return
 		}
 	}
 	if g.Player(color) != nil {
-		err = errors.ErrTeamFull
+		err = gungi_errors.ErrTeamFull
 		return
 	}
 	g.players[color] = player
@@ -125,7 +125,7 @@ func (g *game) Leave(player Player) (err error) {
 			return
 		}
 	}
-	err = errors.ErrPlayerNotFound
+	err = gungi_errors.ErrPlayerNotFound
 	return
 }
 

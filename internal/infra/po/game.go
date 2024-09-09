@@ -1,7 +1,7 @@
 package po
 
 import (
-	"github.com/LoveSnowEx/gungi/pkg/gungi/domain/model"
+	"github.com/LoveSnowEx/gungi/internal/domain/gungi_model"
 	"gorm.io/gorm"
 )
 
@@ -79,117 +79,117 @@ type Player struct {
 	Color  Color
 }
 
-func ToColor(color Color) model.Color {
+func ToColor(color Color) gungi_model.Color {
 	switch color {
 	case White:
-		return model.White
+		return gungi_model.White
 	case Black:
-		return model.Black
+		return gungi_model.Black
 	}
 	panic("invalid color")
 }
 
-func FromColor(color model.Color) Color {
+func FromColor(color gungi_model.Color) Color {
 	switch color {
-	case model.White:
+	case gungi_model.White:
 		return White
-	case model.Black:
+	case gungi_model.Black:
 		return Black
 	}
 	panic("invalid color")
 }
 
-func ToPhase(phase Phase) model.Phase {
+func ToPhase(phase Phase) gungi_model.Phase {
 	switch phase {
 	case Setup:
-		return model.Setup
+		return gungi_model.Setup
 	case Prepare:
-		return model.Prepare
+		return gungi_model.Prepare
 	case Play:
-		return model.Play
+		return gungi_model.Play
 	case End:
-		return model.End
+		return gungi_model.End
 	}
 	panic("invalid phase")
 }
 
-func FromPhase(phase model.Phase) Phase {
+func FromPhase(phase gungi_model.Phase) Phase {
 	switch phase {
-	case model.Setup:
+	case gungi_model.Setup:
 		return Setup
-	case model.Prepare:
+	case gungi_model.Prepare:
 		return Prepare
-	case model.Play:
+	case gungi_model.Play:
 		return Play
-	case model.End:
+	case gungi_model.End:
 		return End
 	}
 	panic("invalid phase")
 }
 
-func ToPieceType(pieceType PieceType) model.PieceType {
+func ToPieceType(pieceType PieceType) gungi_model.PieceType {
 	switch pieceType {
 	case Marshal:
-		return model.Marshal
+		return gungi_model.Marshal
 	case General:
-		return model.General
+		return gungi_model.General
 	case LieutenantGeneral:
-		return model.LieutenantGeneral
+		return gungi_model.LieutenantGeneral
 	case MajorGeneral:
-		return model.MajorGeneral
+		return gungi_model.MajorGeneral
 	case Samurai:
-		return model.Samurai
+		return gungi_model.Samurai
 	case Lancer:
-		return model.Lancer
+		return gungi_model.Lancer
 	case Knight:
-		return model.Knight
+		return gungi_model.Knight
 	case Spy:
-		return model.Spy
+		return gungi_model.Spy
 	case Fortress:
-		return model.Fortress
+		return gungi_model.Fortress
 	case Pawn:
-		return model.Pawn
+		return gungi_model.Pawn
 	case Cannon:
-		return model.Cannon
+		return gungi_model.Cannon
 	case Musketeer:
-		return model.Musketeer
+		return gungi_model.Musketeer
 	case Archer:
-		return model.Archer
+		return gungi_model.Archer
 	case Captain:
-		return model.Captain
+		return gungi_model.Captain
 	}
 	panic("invalid piece type")
 }
 
-func FromPieceType(pieceType model.PieceType) PieceType {
+func FromPieceType(pieceType gungi_model.PieceType) PieceType {
 	switch pieceType {
-	case model.Marshal:
+	case gungi_model.Marshal:
 		return Marshal
-	case model.General:
+	case gungi_model.General:
 		return General
-	case model.LieutenantGeneral:
+	case gungi_model.LieutenantGeneral:
 		return LieutenantGeneral
-	case model.MajorGeneral:
+	case gungi_model.MajorGeneral:
 		return MajorGeneral
-	case model.Samurai:
+	case gungi_model.Samurai:
 		return Samurai
-	case model.Lancer:
+	case gungi_model.Lancer:
 		return Lancer
-	case model.Knight:
+	case gungi_model.Knight:
 		return Knight
-	case model.Spy:
+	case gungi_model.Spy:
 		return Spy
-	case model.Fortress:
+	case gungi_model.Fortress:
 		return Fortress
-	case model.Pawn:
+	case gungi_model.Pawn:
 		return Pawn
-	case model.Cannon:
+	case gungi_model.Cannon:
 		return Cannon
-	case model.Musketeer:
+	case gungi_model.Musketeer:
 		return Musketeer
-	case model.Archer:
+	case gungi_model.Archer:
 		return Archer
-	case model.Captain:
+	case gungi_model.Captain:
 		return Captain
 	}
 	panic("invalid piece type")

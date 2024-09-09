@@ -1,4 +1,4 @@
-package errors
+package gungi_errors
 
 type GungiError uint
 

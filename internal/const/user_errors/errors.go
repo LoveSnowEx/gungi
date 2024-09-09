@@ -1,4 +1,4 @@
-package errors
+package user_errors
 
 type CoreError uint
 
