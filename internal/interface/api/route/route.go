@@ -12,5 +12,9 @@ type Config struct {
 }
 
 func Setup(app *fiber.App, config *Config) {
+	userGroup := app.Group("/user")
+
+	userGroup.Get("/:id", config.UserController.Find)
+
 	// TODO: Add routes here
 }

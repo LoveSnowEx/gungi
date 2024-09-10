@@ -26,6 +26,7 @@ func (r *userRepoImpl) Find(id uint) (user user_model.User, err error) {
 	userPo, err := u.WithContext(context.Background()).Where(u.ID.Eq(id)).First()
 	if err != nil {
 		err = user_errors.ErrUserNotFound
+		return
 	}
 	user = user_model.NewUser(userPo.Name)
 	user.SetId(userPo.ID)
