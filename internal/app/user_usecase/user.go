@@ -5,30 +5,30 @@ import (
 	"github.com/LoveSnowEx/gungi/internal/domain/user_repo"
 )
 
-type UserUsecaseConfig struct {
-	UserRepo user_repo.UserRepo
+type Config struct {
+	UserRepo user_repo.Repo
 }
 
-type UserUsecase interface {
+type Usecase interface {
 	Find(id uint) (user user_model.User, err error)
 	Create(name string) (user user_model.User, err error)
 }
 
-type userUsecase struct {
-	userRepo user_repo.UserRepo
+type usecase struct {
+	userRepo user_repo.Repo
 }
 
-func NewUserUsecase(config *UserUsecaseConfig) UserUsecase {
-	return &userUsecase{
+func New(config *Config) Usecase {
+	return &usecase{
 		userRepo: config.UserRepo,
 	}
 }
 
-func (u *userUsecase) Find(id uint) (user user_model.User, err error) {
+func (u *usecase) Find(id uint) (user user_model.User, err error) {
 	return u.userRepo.Find(id)
 }
 
-func (u *userUsecase) Create(name string) (user user_model.User, err error) {
+func (u *usecase) Create(name string) (user user_model.User, err error) {
 	user = user_model.NewUser(name)
 	err = u.userRepo.Create(user)
 	if err != nil {

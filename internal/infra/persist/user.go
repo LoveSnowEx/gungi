@@ -11,13 +11,13 @@ import (
 )
 
 var (
-	_ user_repo.UserRepo = (*userRepoImpl)(nil)
+	_ user_repo.Repo = (*userRepoImpl)(nil)
 )
 
 type userRepoImpl struct {
 }
 
-func NewUserRepo() user_repo.UserRepo {
+func NewUserRepo() user_repo.Repo {
 	return &userRepoImpl{}
 }
 
