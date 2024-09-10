@@ -1,7 +1,6 @@
 package bootstrap
 
 import (
-	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -13,10 +12,6 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
-
-func SetupSlog() {
-	slog.SetDefault(logger.Slog())
-}
 
 func SetupDB() {
 	source := config.Database.Source()
