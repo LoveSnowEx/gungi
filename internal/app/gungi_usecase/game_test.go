@@ -1,4 +1,4 @@
-package gungi_usecase
+package gungi_usecase_test
 
 import (
 	"log/slog"
@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"runtime/debug"
 	"testing"
+
+	. "github.com/LoveSnowEx/gungi/internal/app/gungi_usecase"
 
 	"github.com/LoveSnowEx/gungi/config"
 	"github.com/LoveSnowEx/gungi/internal/bootstrap"
