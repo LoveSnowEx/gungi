@@ -11,17 +11,17 @@ import (
 )
 
 var (
-	_ user_repo.Repo = (*userRepoImpl)(nil)
+	_ user_repo.Repo = (*userRepo)(nil)
 )
 
-type userRepoImpl struct {
+type userRepo struct {
 }
 
-func NewUserRepo() user_repo.Repo {
-	return &userRepoImpl{}
+func NewUserRepo() *userRepo {
+	return &userRepo{}
 }
 
-func (r *userRepoImpl) Find(id uint) (user user_model.User, err error) {
+func (r *userRepo) Find(id uint) (user user_model.User, err error) {
 	u := dal.User
 	userPo, err := u.WithContext(context.Background()).Where(u.ID.Eq(id)).First()
 	if err != nil {
@@ -29,19 +29,19 @@ func (r *userRepoImpl) Find(id uint) (user user_model.User, err error) {
 		return
 	}
 	user = user_model.NewUser(userPo.Name)
-	user.SetId(userPo.ID)
+	user.ID = userPo.ID
 	return
 }
 
-func (r *userRepoImpl) Create(user user_model.User) (err error) {
+func (r *userRepo) Create(user user_model.User) (id uint, err error) {
 	userPo := po.User{
-		Name: user.Name(),
+		Name: user.Name,
 	}
 	u := dal.User
 	err = u.WithContext(context.Background()).Create(&userPo)
 	if err != nil {
 		return
 	}
-	user.SetId(userPo.ID)
+	id = userPo.ID
 	return
 }

@@ -8,17 +8,27 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-type Controller struct {
+var _ Controller = (*controller)(nil)
+
+type Config struct {
+	UserUsecase user_usecase.Usecase
+}
+
+type Controller interface {
+	Find(ctx fiber.Ctx) error
+}
+
+type controller struct {
 	userUsecase user_usecase.Usecase
 }
 
-func New(userUsecase user_usecase.Usecase) *Controller {
-	return &Controller{
-		userUsecase: userUsecase,
+func New(config *Config) *controller {
+	return &controller{
+		userUsecase: config.UserUsecase,
 	}
 }
 
-func (c *Controller) Find(ctx fiber.Ctx) error {
+func (c *controller) Find(ctx fiber.Ctx) error {
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 32)
 	if err != nil {
 		return err
@@ -29,7 +39,7 @@ func (c *Controller) Find(ctx fiber.Ctx) error {
 	}
 	return ctx.JSON(fiber.Map{
 		"user": user_dto.User{
-			Name: user.Name(),
+			Name: user.Name,
 		},
 	})
 }

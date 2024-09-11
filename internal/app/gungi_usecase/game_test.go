@@ -60,7 +60,7 @@ func NewFakeGameUsecase() GameUsecase {
 
 func MakeFakeUsers(users ...user_model.User) (err error) {
 	for _, user := range users {
-		if err = persist.NewUserRepo().Create(user); err != nil {
+		if _, err = persist.NewUserRepo().Create(user); err != nil {
 			return
 		}
 	}
@@ -137,7 +137,7 @@ func Test_gameUsecase_StartGame(t *testing.T) {
 					t.Errorf("MakeFakeUsers() error = %v", err)
 					return
 				}
-				if err := u.JoinGame(game.Id(), user.Id(), tt.colors[i]); err != nil {
+				if err := u.JoinGame(game.Id(), user.ID, tt.colors[i]); err != nil {
 					t.Errorf("gameService.JoinGame() error = %v", err)
 					return
 				}

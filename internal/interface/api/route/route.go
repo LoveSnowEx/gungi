@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	UserController  *user_controller.Controller
-	GungiController *gungi_controller.Controller
+	UserController  user_controller.Controller
+	GungiController gungi_controller.Controller
 }
 
 func Setup(app *fiber.App, config *Config) {

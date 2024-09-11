@@ -11,14 +11,14 @@ type Config struct {
 
 type Usecase interface {
 	Find(id uint) (user user_model.User, err error)
-	Create(name string) (user user_model.User, err error)
+	Create(name string) (id uint, err error)
 }
 
 type usecase struct {
 	userRepo user_repo.Repo
 }
 
-func New(config *Config) Usecase {
+func New(config *Config) *usecase {
 	return &usecase{
 		userRepo: config.UserRepo,
 	}
@@ -28,13 +28,7 @@ func (u *usecase) Find(id uint) (user user_model.User, err error) {
 	return u.userRepo.Find(id)
 }
 
-func (u *usecase) Create(name string) (user user_model.User, err error) {
-	user = user_model.NewUser(name)
-	err = u.userRepo.Create(user)
-	if err != nil {
-		user = nil
-		return
-	}
-	return
-
+func (u *usecase) Create(name string) (id uint, err error) {
+	user := user_model.NewUser(name)
+	return u.userRepo.Create(user)
 }

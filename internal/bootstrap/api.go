@@ -24,10 +24,10 @@ func SetupApi(app *fiber.App) {
 		return
 	})
 	route.Setup(app, &route.Config{
-		UserController: user_controller.New(
+		UserController: user_controller.New(&user_controller.Config{
 			user_usecase.New(&user_usecase.Config{
 				UserRepo: persist.NewUserRepo(),
 			}),
-		),
+		}),
 	})
 }
