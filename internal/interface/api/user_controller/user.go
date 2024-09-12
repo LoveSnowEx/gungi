@@ -16,6 +16,7 @@ type Config struct {
 
 type Controller interface {
 	Find(ctx fiber.Ctx) error
+	Create(ctx fiber.Ctx) error
 }
 
 type controller struct {
@@ -41,5 +42,19 @@ func (c *controller) Find(ctx fiber.Ctx) error {
 		"user": user_dto.User{
 			Name: user.Name,
 		},
+	})
+}
+
+func (c *controller) Create(ctx fiber.Ctx) error {
+	name := ctx.FormValue("name")
+	if name == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "name is required")
+	}
+	id, err := c.userUsecase.Create(name)
+	if err != nil {
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
+	}
+	return ctx.JSON(fiber.Map{
+		"id": id,
 	})
 }

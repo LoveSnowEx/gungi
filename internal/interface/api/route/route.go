@@ -20,6 +20,7 @@ func Setup(app *fiber.App, config *Config) {
 	userGroup := app.Group("/user")
 
 	userGroup.Get("/:id", config.UserController.Find)
+	userGroup.Post("/", config.UserController.Create)
 
 	// TODO: Add routes here
 }
