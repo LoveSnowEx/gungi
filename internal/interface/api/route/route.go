@@ -12,6 +12,11 @@ type Config struct {
 }
 
 func Setup(app *fiber.App, config *Config) {
+	// Health check
+	app.Head("/", func(c fiber.Ctx) error {
+		return nil
+	})
+
 	userGroup := app.Group("/user")
 
 	userGroup.Get("/:id", config.UserController.Find)
