@@ -15,6 +15,7 @@ var (
 )
 
 type GameUsecaseConfig struct {
+	GameService  gungi_service.GameService
 	GameRepo     gungi_repo.GameRepo
 	PlayerRepo   gungi_repo.PlayerRepo
 	EventManager event.ManagerFace
@@ -40,9 +41,9 @@ type gameUsecase struct {
 	eventManager event.ManagerFace
 }
 
-func NewGameUsecase(config *GameUsecaseConfig) GameUsecase {
+func New(config *GameUsecaseConfig) *gameUsecase {
 	return &gameUsecase{
-		gameService:  gungi_service.NewGameService(),
+		gameService:  config.GameService,
 		gameRepo:     config.GameRepo,
 		playerRepo:   config.PlayerRepo,
 		eventManager: config.EventManager,

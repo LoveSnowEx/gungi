@@ -19,7 +19,7 @@ type GameService interface {
 type gameService struct {
 }
 
-func NewGameService() GameService {
+func NewGameService() *gameService {
 	return &gameService{}
 }
 

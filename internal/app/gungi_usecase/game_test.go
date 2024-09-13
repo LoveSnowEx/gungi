@@ -51,7 +51,7 @@ func TestMain(m *testing.M) {
 }
 
 func NewFakeGameUsecase() GameUsecase {
-	return NewGameUsecase(&GameUsecaseConfig{
+	return New(&GameUsecaseConfig{
 		GameRepo:     persist.NewGameRepo(),
 		PlayerRepo:   persist.NewPlayerRepo(),
 		EventManager: notification.NewGameManager(),
