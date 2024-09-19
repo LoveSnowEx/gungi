@@ -16,8 +16,8 @@ func Setup(app *fiber.App, config *Config) {
 	// Health check
 	app.Get(healthcheck.DefaultLivenessEndpoint, healthcheck.NewHealthChecker())
 
+	// User
 	userGroup := app.Group("/user")
-
 	userGroup.Get("/:id", config.UserController.Find)
 	userGroup.Post("/", config.UserController.Create)
 
