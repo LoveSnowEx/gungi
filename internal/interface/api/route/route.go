@@ -4,6 +4,7 @@ import (
 	"github.com/LoveSnowEx/gungi/internal/interface/api/gungi_controller"
 	"github.com/LoveSnowEx/gungi/internal/interface/api/user_controller"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/healthcheck"
 )
 
 type Config struct {
@@ -13,9 +14,7 @@ type Config struct {
 
 func Setup(app *fiber.App, config *Config) {
 	// Health check
-	app.Head("/", func(c fiber.Ctx) error {
-		return nil
-	})
+	app.Get(healthcheck.DefaultLivenessEndpoint, healthcheck.NewHealthChecker())
 
 	userGroup := app.Group("/user")
 

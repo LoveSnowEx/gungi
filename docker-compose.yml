@@ -7,7 +7,7 @@ services:
     volumes:
       - .:/app
     healthcheck:
-      test: ["CMD", "curl", "-f", "--request", "HEAD", "--url", "http://localhost:3000"]
+      test: ["CMD", "curl", "-f", "--url", "http://localhost:3000/livez"]
       interval: 30s
       timeout: 5s
       retries: 5
