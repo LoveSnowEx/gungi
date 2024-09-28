@@ -1,21 +1,30 @@
 package gungi_usecase_test
 
 import (
+	"context"
 	"log/slog"
 	"runtime/debug"
 	"testing"
 
 	. "github.com/LoveSnowEx/gungi/internal/app/gungi_usecase"
+	"github.com/LoveSnowEx/gungi/tool/testtool"
 
 	"github.com/LoveSnowEx/gungi/config"
 	"github.com/LoveSnowEx/gungi/internal/bootstrap"
 	"github.com/LoveSnowEx/gungi/internal/domain/gungi_model"
 	"github.com/LoveSnowEx/gungi/internal/domain/gungi_service"
-	"github.com/LoveSnowEx/gungi/internal/domain/user_model"
+	"github.com/LoveSnowEx/gungi/internal/infra/dal"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/notification"
 	"github.com/LoveSnowEx/gungi/internal/infra/persist"
+	"github.com/LoveSnowEx/gungi/internal/infra/po"
 	"github.com/gookit/event"
+)
+
+var (
+	userFactory = testtool.New(func() testtool.Do[po.User] {
+		return dal.User.WithContext(context.Background())
+	})
 )
 
 func setup() {
@@ -49,15 +58,6 @@ func NewFakeGameUsecase() GameUsecase {
 		PlayerRepo:   persist.NewPlayerRepo(),
 		EventManager: notification.NewGameManager(),
 	})
-}
-
-func MakeFakeUsers(users ...user_model.User) (err error) {
-	for _, user := range users {
-		if _, err = persist.NewUserRepo().Create(user); err != nil {
-			return
-		}
-	}
-	return
 }
 
 func Test_gameUsecase_CreateGame(t *testing.T) {
@@ -124,8 +124,10 @@ func Test_gameUsecase_StartGame(t *testing.T) {
 				return
 			}
 			for i, playername := range tt.playernames {
-				user := user_model.NewUser(playername)
-				err = MakeFakeUsers(user)
+				user := &po.User{
+					Name: playername,
+				}
+				err = userFactory.Create(user)
 				if err != nil {
 					t.Errorf("MakeFakeUsers() error = %v", err)
 					return
