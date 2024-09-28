@@ -3,44 +3,45 @@ package persist
 import (
 	"context"
 
+	"github.com/LoveSnowEx/gungi/internal/const/user_errors"
+	"github.com/LoveSnowEx/gungi/internal/domain/user_model"
+	"github.com/LoveSnowEx/gungi/internal/domain/user_repo"
 	"github.com/LoveSnowEx/gungi/internal/infra/dal"
 	"github.com/LoveSnowEx/gungi/internal/infra/po"
-	"github.com/LoveSnowEx/gungi/pkg/core/domain/model"
-	"github.com/LoveSnowEx/gungi/pkg/core/domain/repo"
-	"github.com/LoveSnowEx/gungi/pkg/core/errors"
 )
 
 var (
-	_ repo.UserRepo = (*userRepoImpl)(nil)
+	_ user_repo.Repo = (*userRepo)(nil)
 )
 
-type userRepoImpl struct {
+type userRepo struct {
 }
 
-func NewUserRepo() repo.UserRepo {
-	return &userRepoImpl{}
+func NewUserRepo() *userRepo {
+	return &userRepo{}
 }
 
-func (r *userRepoImpl) Find(id uint) (user model.User, err error) {
+func (r *userRepo) Find(id uint) (user user_model.User, err error) {
 	u := dal.User
 	userPo, err := u.WithContext(context.Background()).Where(u.ID.Eq(id)).First()
 	if err != nil {
-		err = errors.ErrUserNotFound
+		err = user_errors.ErrUserNotFound
+		return
 	}
-	user = model.NewUser(userPo.Name)
-	user.SetId(userPo.ID)
+	user = user_model.NewUser(userPo.Name)
+	user.ID = userPo.ID
 	return
 }
 
-func (r *userRepoImpl) Create(user model.User) (err error) {
+func (r *userRepo) Create(user user_model.User) (id uint, err error) {
 	userPo := po.User{
-		Name: user.Name(),
+		Name: user.Name,
 	}
 	u := dal.User
 	err = u.WithContext(context.Background()).Create(&userPo)
 	if err != nil {
 		return
 	}
-	user.SetId(userPo.ID)
+	id = userPo.ID
 	return
 }

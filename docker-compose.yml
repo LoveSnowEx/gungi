@@ -1,0 +1,13 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    volumes:
+      - .:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "--url", "http://localhost:3000/livez"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
