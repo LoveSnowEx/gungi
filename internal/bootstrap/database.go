@@ -1,34 +1,19 @@
 package bootstrap
 
 import (
-	"os"
-	"path/filepath"
-
+	"github.com/LoveSnowEx/gotool/database/gormtool"
 	"github.com/LoveSnowEx/gungi/config"
 	"github.com/LoveSnowEx/gungi/internal/infra/dal"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/po"
 	"github.com/LoveSnowEx/gungi/tool/logger"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 func SetupDB() {
-	source := config.Database.Source()
-	dir := filepath.Dir(source)
-	var err error
-	if _, err = os.Stat(dir); err != nil {
-		if err = os.MkdirAll(dir, os.ModePerm); err != nil {
-			panic(err)
-		}
-	}
-
-	db, err := gorm.Open(
-		sqlite.Open(source),
-		&gorm.Config{
-			Logger: logger.Gorm(),
-		},
-	)
+	db, err := gormtool.Open(config.Database, &gorm.Config{
+		Logger: logger.Gorm(),
+	})
 	if err != nil {
 		panic(err)
 	}

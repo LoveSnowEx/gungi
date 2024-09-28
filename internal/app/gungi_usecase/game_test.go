@@ -2,8 +2,6 @@ package gungi_usecase_test
 
 import (
 	"log/slog"
-	"os"
-	"path/filepath"
 	"runtime/debug"
 	"testing"
 
@@ -16,17 +14,11 @@ import (
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/notification"
 	"github.com/LoveSnowEx/gungi/internal/infra/persist"
-	"github.com/google/uuid"
 	"github.com/gookit/event"
 )
 
 func setup() {
-	u, err := uuid.NewUUID()
-	if err != nil {
-		panic(err)
-	}
-	source := filepath.Join("tmp", u.String()+".db")
-	config.Database.SetSource(source)
+	config.Database.Database = ":memory:"
 	bootstrap.SetupSlog()
 	bootstrap.SetupDB()
 }
@@ -34,7 +26,6 @@ func setup() {
 func teardown() {
 	sqlDB, _ := database.Default().DB()
 	sqlDB.Close()
-	_ = os.Remove(config.Database.Source())
 }
 
 func TestMain(m *testing.M) {

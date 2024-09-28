@@ -5,12 +5,13 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/LoveSnowEx/gotool/database"
 	"github.com/LoveSnowEx/gungi/tool/pathtool"
 	"github.com/spf13/viper"
 )
 
 var (
-	Database DatabaseConfig
+	Database *database.Config
 	Logger   LoggerConfig
 )
 
@@ -25,9 +26,13 @@ func init() {
 	}
 
 	// database
-	viper.SetDefault("database.source", "gungi.db")
-	Database = &databaseConfig{}
-	Database.SetSource(viper.GetString("database.source"))
+	viper.SetDefault("database.driver", "sqlite")
+	viper.SetDefault("database.database", "tmp/gungi.db")
+	if config, err := database.ReadViper(viper.Sub("database")); err != nil {
+		panic(err)
+	} else {
+		Database = config
+	}
 
 	// logger
 	viper.SetDefault("logger.slog", nil)
