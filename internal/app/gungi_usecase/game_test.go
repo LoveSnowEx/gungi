@@ -1,32 +1,34 @@
 package gungi_usecase_test
 
 import (
+	"context"
 	"log/slog"
-	"os"
-	"path/filepath"
 	"runtime/debug"
 	"testing"
 
 	. "github.com/LoveSnowEx/gungi/internal/app/gungi_usecase"
+	"github.com/LoveSnowEx/gungi/tool/testtool"
 
 	"github.com/LoveSnowEx/gungi/config"
 	"github.com/LoveSnowEx/gungi/internal/bootstrap"
 	"github.com/LoveSnowEx/gungi/internal/domain/gungi_model"
-	"github.com/LoveSnowEx/gungi/internal/domain/user_model"
+	"github.com/LoveSnowEx/gungi/internal/domain/gungi_service"
+	"github.com/LoveSnowEx/gungi/internal/infra/dal"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/notification"
 	"github.com/LoveSnowEx/gungi/internal/infra/persist"
-	"github.com/google/uuid"
+	"github.com/LoveSnowEx/gungi/internal/infra/po"
 	"github.com/gookit/event"
 )
 
+var (
+	userFactory = testtool.New(func() testtool.Do[po.User] {
+		return dal.User.WithContext(context.Background())
+	})
+)
+
 func setup() {
-	u, err := uuid.NewUUID()
-	if err != nil {
-		panic(err)
-	}
-	source := filepath.Join("tmp", u.String()+".db")
-	config.Database.SetSource(source)
+	config.Database.Database = ":memory:"
 	bootstrap.SetupSlog()
 	bootstrap.SetupDB()
 }
@@ -34,7 +36,6 @@ func setup() {
 func teardown() {
 	sqlDB, _ := database.Default().DB()
 	sqlDB.Close()
-	_ = os.Remove(config.Database.Source())
 }
 
 func TestMain(m *testing.M) {
@@ -52,19 +53,11 @@ func TestMain(m *testing.M) {
 
 func NewFakeGameUsecase() GameUsecase {
 	return New(&GameUsecaseConfig{
+		GameService:  gungi_service.NewGameService(),
 		GameRepo:     persist.NewGameRepo(),
 		PlayerRepo:   persist.NewPlayerRepo(),
 		EventManager: notification.NewGameManager(),
 	})
-}
-
-func MakeFakeUsers(users ...user_model.User) (err error) {
-	for _, user := range users {
-		if _, err = persist.NewUserRepo().Create(user); err != nil {
-			return
-		}
-	}
-	return
 }
 
 func Test_gameUsecase_CreateGame(t *testing.T) {
@@ -131,8 +124,10 @@ func Test_gameUsecase_StartGame(t *testing.T) {
 				return
 			}
 			for i, playername := range tt.playernames {
-				user := user_model.NewUser(playername)
-				err = MakeFakeUsers(user)
+				user := &po.User{
+					Name: playername,
+				}
+				err = userFactory.Create(user)
 				if err != nil {
 					t.Errorf("MakeFakeUsers() error = %v", err)
 					return
