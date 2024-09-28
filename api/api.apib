@@ -121,3 +121,56 @@ HOST: https://polls.apiblueprint.org/
 
             Location: /api/games/7
     + Attributes (Game)
+
+### Join Game [POST /api/games/{id}/join]
+
++ Parameters
+    + id (required, number, `1`) ... ID of the game
+
++ Request (application/json)
+    + Attributes
+        + user_id: 22 (number)
+        + color: BLACK (Color)
+
++ Response 200 (application/json)
+    + Attributes (Game)
+
++ Response 404 (application/problem+json)
+    + Attributes
+        + title: Game not found (string)
+
++ Response 409 (application/problem+json)
+    + Attributes
+        + title: Game is full (string)
+
+### Leave Game [POST /api/games/{id}/leave]
+
++ Parameters
+    + id (required, number, `1`) ... ID of the game
+
++ Request (application/json)
+    + Attributes
+        + user_id: 22 (number)
+
++ Response 200 (application/json)
+    + Attributes (Game)
+
++ Response 404 (application/problem+json)
+    + Attributes
+        + title: Game not found (string)
+
++ Response 409 (application/problem+json)
+    + Attributes
+        + title: User is not in the game (string)
+
+### Start Game [POST /api/games/{id}/start]
+
++ Parameters
+    + id (required, number, `1`) ... ID of the game
+
++ Response 200 (application/json)
+    + Attributes (Game)
+
++ Response 404 (application/problem+json)
+    + Attributes
+        + title: Game not found (string)
