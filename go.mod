@@ -3,10 +3,10 @@ module github.com/LoveSnowEx/gungi
 go 1.22
 
 require (
-	github.com/LoveSnowEx/gotool v1.0.6
+	github.com/LoveSnowEx/gotool v1.1.0
 	github.com/gofiber/fiber/v3 v3.0.0-beta.3
 	github.com/gookit/event v1.1.1
-	github.com/spf13/viper v1.18.1
+	github.com/spf13/viper v1.19.0
 	gorm.io/gen v0.3.24
 	gorm.io/gorm v1.25.5
 	gorm.io/plugin/dbresolver v1.5.0
@@ -38,7 +38,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/panjf2000/ants/v2 v2.9.0 // indirect
-	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
