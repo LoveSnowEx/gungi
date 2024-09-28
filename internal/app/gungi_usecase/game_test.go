@@ -10,6 +10,7 @@ import (
 	"github.com/LoveSnowEx/gungi/config"
 	"github.com/LoveSnowEx/gungi/internal/bootstrap"
 	"github.com/LoveSnowEx/gungi/internal/domain/gungi_model"
+	"github.com/LoveSnowEx/gungi/internal/domain/gungi_service"
 	"github.com/LoveSnowEx/gungi/internal/domain/user_model"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/notification"
@@ -43,6 +44,7 @@ func TestMain(m *testing.M) {
 
 func NewFakeGameUsecase() GameUsecase {
 	return New(&GameUsecaseConfig{
+		GameService:  gungi_service.NewGameService(),
 		GameRepo:     persist.NewGameRepo(),
 		PlayerRepo:   persist.NewPlayerRepo(),
 		EventManager: notification.NewGameManager(),
