@@ -1,9 +1,9 @@
 module github.com/LoveSnowEx/gungi
 
-go 1.22
+go 1.22.5
 
 require (
-	github.com/LoveSnowEx/gotool v1.1.0
+	github.com/LoveSnowEx/gotool v1.1.1
 	github.com/gofiber/fiber/v3 v3.0.0-beta.3
 	github.com/gookit/event v1.1.1
 	github.com/spf13/viper v1.19.0
