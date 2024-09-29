@@ -28,10 +28,10 @@ type Game interface {
 	Join(color Color, player Player) error
 	// Leave removes a player from the game.
 	Leave(player Player) error
-	// CurrentTurn returns the color of the player whose turn it is.
-	CurrentTurn() Color
-	// SetCurrentTurn sets the color of the player whose turn it is.
-	SetCurrentTurn(color Color)
+	// Turn returns the color of the player whose turn it is.
+	Turn() Color
+	// SetTurn sets the color of the player whose turn it is.
+	SetTurn(color Color)
 	// Phase returns the current phase of the game.
 	Phase() Phase
 	// SetPhase sets the current phase of the game.
@@ -122,18 +122,18 @@ func (g *game) Leave(player Player) (err error) {
 	return
 }
 
-func (g *game) SetCurrentTurn(color Color) {
-	g.currentTurn = color
-}
-
-func (g game) CurrentTurn() Color {
+func (g game) Turn() Color {
 	return g.currentTurn
 }
 
-func (g *game) SetPhase(phase Phase) {
-	g.phase = phase
+func (g *game) SetTurn(color Color) {
+	g.currentTurn = color
 }
 
 func (g game) Phase() Phase {
 	return g.phase
+}
+
+func (g *game) SetPhase(phase Phase) {
+	g.phase = phase
 }

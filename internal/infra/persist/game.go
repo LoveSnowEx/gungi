@@ -46,7 +46,7 @@ func (r *gameRepoImpl) Find(id uint) (game gungi_model.Game, err error) {
 	}
 	game = gungi_model.NewGame()
 	game.SetId(gamePo.ID)
-	game.SetCurrentTurn(po.ToColor(gamePo.CurrentTurn))
+	game.SetTurn(po.ToColor(gamePo.CurrentTurn))
 	game.SetPhase(po.ToPhase(gamePo.Phase))
 	// Players
 	for _, playerPo := range gamePo.Players {
@@ -94,7 +94,7 @@ func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
 		BoardPieces: make([]po.BoardPiece, 0),
 		Reserve:     make([]po.ReservePiece, 0),
 		Discard:     make([]po.DiscardPiece, 0),
-		CurrentTurn: po.FromColor(game.CurrentTurn()),
+		CurrentTurn: po.FromColor(game.Turn()),
 		Phase:       po.FromPhase(game.Phase()),
 	}
 
