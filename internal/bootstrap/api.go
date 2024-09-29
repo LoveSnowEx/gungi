@@ -19,15 +19,13 @@ func SetupApi(app *fiber.App) {
 				UserRepo: persist.NewUserRepo(),
 			}),
 		}),
-		GungiController: *gungi_controller.New(
-			gungi_usecase.New(
-				&gungi_usecase.GameUsecaseConfig{
-					GameService:  gungi_service.NewGameService(),
-					GameRepo:     persist.NewGameRepo(),
-					PlayerRepo:   persist.NewPlayerRepo(),
-					EventManager: notification.NewGameManager(),
-				},
-			),
-		),
+		GungiController: *gungi_controller.New(&gungi_controller.Config{
+			GungiUsecase: gungi_usecase.New(&gungi_usecase.GameUsecaseConfig{
+				GameService:  gungi_service.NewGameService(),
+				GameRepo:     persist.NewGameRepo(),
+				PlayerRepo:   persist.NewPlayerRepo(),
+				EventManager: notification.NewGameManager(),
+			}),
+		}),
 	})
 }
