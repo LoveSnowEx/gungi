@@ -3,7 +3,6 @@ package bootstrap
 import (
 	"github.com/LoveSnowEx/gotool/database/gormtool"
 	"github.com/LoveSnowEx/gungi/config"
-	"github.com/LoveSnowEx/gungi/internal/infra/dal"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/po"
 	"github.com/LoveSnowEx/gungi/tool/logger"
@@ -21,12 +20,9 @@ func SetupDB() {
 		&po.User{},
 		&po.Game{},
 		&po.Player{},
-		&po.BoardPiece{},
-		&po.ReservePiece{},
-		&po.DiscardPiece{},
+		&po.Piece{},
 	); err != nil {
 		panic(err)
 	}
 	database.SetDefault(db)
-	dal.SetDefault(db)
 }

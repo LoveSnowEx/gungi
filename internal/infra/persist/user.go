@@ -1,12 +1,11 @@
 package persist
 
 import (
-	"context"
-
 	"github.com/LoveSnowEx/gungi/internal/const/user_errors"
 	"github.com/LoveSnowEx/gungi/internal/domain/user_model"
 	"github.com/LoveSnowEx/gungi/internal/domain/user_repo"
-	"github.com/LoveSnowEx/gungi/internal/infra/dal"
+
+	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/po"
 )
 
@@ -22,9 +21,8 @@ func NewUserRepo() *userRepo {
 }
 
 func (r *userRepo) Find(id uint) (user user_model.User, err error) {
-	u := dal.User
-	userPo, err := u.WithContext(context.Background()).Where(u.ID.Eq(id)).First()
-	if err != nil {
+	userPo := po.User{}
+	if err = database.Default().Where("id = ?", id).First(&userPo).Error; err != nil {
 		err = user_errors.ErrUserNotFound
 		return
 	}
@@ -37,9 +35,7 @@ func (r *userRepo) Create(user user_model.User) (id uint, err error) {
 	userPo := po.User{
 		Name: user.Name,
 	}
-	u := dal.User
-	err = u.WithContext(context.Background()).Create(&userPo)
-	if err != nil {
+	if err = database.Default().Create(&userPo).Error; err != nil {
 		return
 	}
 	id = userPo.ID

@@ -1,21 +1,18 @@
 package testtool
 
-type Factory[Po any] interface {
-	Create(values ...*Po) error
+import "github.com/LoveSnowEx/gungi/internal/infra/database"
+
+type Factory[Model any] interface {
+	Create(value interface{}) error
 }
 
-type Do[Po any] interface {
-	Create(values ...*Po) error
+type factory[Model any] struct {
 }
 
-type factory[Po any] struct {
-	newDo func() Do[Po]
+func NewFactory[Model any]() Factory[Model] {
+	return &factory[Model]{}
 }
 
-func New[Po any](newDo func() Do[Po]) Factory[Po] {
-	return &factory[Po]{newDo: newDo}
-}
-
-func (f *factory[Po]) Create(values ...*Po) error {
-	return f.newDo().Create(values...)
+func (f *factory[Model]) Create(value interface{}) error {
+	return database.Default().Create(value).Error
 }

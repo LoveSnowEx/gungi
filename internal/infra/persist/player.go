@@ -1,12 +1,11 @@
 package persist
 
 import (
-	"context"
-
 	"github.com/LoveSnowEx/gungi/internal/const/gungi_errors"
 	"github.com/LoveSnowEx/gungi/internal/domain/gungi_model"
 	"github.com/LoveSnowEx/gungi/internal/domain/gungi_repo"
-	"github.com/LoveSnowEx/gungi/internal/infra/dal"
+	"github.com/LoveSnowEx/gungi/internal/infra/database"
+	"github.com/LoveSnowEx/gungi/internal/infra/po"
 )
 
 var (
@@ -21,13 +20,13 @@ func NewPlayerRepo() gungi_repo.PlayerRepo {
 }
 
 func (r *playerRepoImpl) Find(id uint) (player gungi_model.Player, err error) {
-	u := dal.User
-	userPo, err := u.WithContext(context.Background()).Where(u.ID.Eq(id)).First()
+	playerPo := po.User{}
+	err = database.Default().Where("id = ?", id).First(&playerPo).Error
 	if err != nil {
 		err = gungi_errors.ErrPlayerNotFound
 		return
 	}
-	player = gungi_model.NewPlayer(userPo.Name)
-	player.SetId(userPo.ID)
+	player = gungi_model.NewPlayer(playerPo.Name)
+	player.SetId(playerPo.ID)
 	return
 }

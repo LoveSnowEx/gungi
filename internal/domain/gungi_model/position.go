@@ -12,7 +12,7 @@ type DiscardPosition struct {
 	Idx   uint
 }
 
-func NewBoardPosition(x, y, z int) BoardPosition {
+func NewBoardPosition(x, y, z uint) BoardPosition {
 	return BoardPosition{
 		Vector2D: NewVector2D(int(x), int(y)),
 		Z:        int(z),
