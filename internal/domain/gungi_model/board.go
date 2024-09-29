@@ -19,7 +19,7 @@ type board struct {
 	locations map[Piece]Vector3D
 }
 
-func NewBoard() Board {
+func NewBoard() *board {
 	return &board{
 		board:     [BoardRows][BoardCols][BoardLevels]Piece{},
 		locations: map[Piece]Vector3D{},

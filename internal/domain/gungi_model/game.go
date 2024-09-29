@@ -54,8 +54,8 @@ type game struct {
 	phase       Phase
 }
 
-func NewGame() (g Game) {
-	g = &game{
+func NewGame() *game {
+	return &game{
 		board: NewBoard(),
 		reserve: map[Color]PieceArea{
 			White: NewPieceArea(),
@@ -72,7 +72,6 @@ func NewGame() (g Game) {
 		currentTurn: White,
 		phase:       Setup,
 	}
-	return
 }
 
 func (g game) Id() uint {
