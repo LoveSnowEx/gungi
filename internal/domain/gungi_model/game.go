@@ -11,6 +11,8 @@ const (
 	End
 )
 
+var _ Game = (*game)(nil)
+
 type Game interface {
 	// Id returns the id of the game.
 	Id() uint
@@ -19,11 +21,17 @@ type Game interface {
 	// Board returns the board of the game.
 	Board() [BoardRows][BoardCols][BoardLevels]Piece
 	// Reserve returns the reserve of the game.
-	Reserve(color Color) PieceArea
+	Reserve(color Color) [AreaSize]Piece
 	// Discard returns the discard area of the game.
-	Discard(color Color) PieceArea
+	Discard(color Color) [AreaSize]Piece
 	// Player returns the player of the game.
 	Player(color Color) Player
+	// SetBoard sets the board of the game.
+	SetBoard(b Board)
+	// SetReserve sets the reserve of the game.
+	SetReserve(color Color, r PieceArea)
+	// SetDiscard sets the discard area of the game.
+	SetDiscard(color Color, d PieceArea)
 	// Join adds a player to the game.
 	Join(color Color, player Player) error
 	// Leave removes a player from the game.
@@ -80,12 +88,12 @@ func (g game) Board() [BoardRows][BoardCols][BoardLevels]Piece {
 	return g.board.Board()
 }
 
-func (g game) Reserve(color Color) PieceArea {
-	return g.reserve[color]
+func (g game) Reserve(color Color) [AreaSize]Piece {
+	return g.reserve[color].Area()
 }
 
-func (g game) Discard(color Color) PieceArea {
-	return g.discard[color]
+func (g game) Discard(color Color) [AreaSize]Piece {
+	return g.discard[color].Area()
 }
 
 func (g game) Player(color Color) Player {
@@ -94,6 +102,26 @@ func (g game) Player(color Color) Player {
 		return nil
 	}
 	return player
+}
+
+func (g *game) SetBoard(b Board) {
+	g.board = b
+}
+
+func (g *game) SetReserve(color Color, r PieceArea) {
+	g.reserve[color] = r
+}
+
+func (g *game) SetDiscard(color Color, d PieceArea) {
+	g.discard[color] = d
+}
+
+func (g *game) PutDiscardPieces(discardPieces map[Color][AreaSize]Piece) {
+	for color, pieces := range discardPieces {
+		for idx, piece := range pieces {
+			g.discard[color].Set(uint(idx), piece)
+		}
+	}
 }
 
 func (g *game) Join(color Color, player Player) (err error) {

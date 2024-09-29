@@ -45,14 +45,14 @@ func (g *gameService) Start(game gungi_model.Game, pieceAmounts map[gungi_model.
 		return
 	}
 	for _, color := range gungi_model.Colors() {
+		pieceArea := gungi_model.NewPieceArea()
+		idx := uint(0)
 		for pieceType, amount := range pieceAmounts {
 			for i := 0; i < amount; i++ {
-				piece := gungi_model.NewPiece(pieceType, color)
-				if err = game.Reserve(color).Add(piece); err != nil {
-					return
-				}
+				pieceArea.Set(idx, gungi_model.NewPiece(pieceType, color))
 			}
 		}
+		game.SetReserve(color, pieceArea)
 	}
 	game.SetPhase(gungi_model.Prepare)
 	return
