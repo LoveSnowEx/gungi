@@ -5,6 +5,8 @@ import (
 	"github.com/LoveSnowEx/gungi/internal/interface/api/user_controller"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/healthcheck"
+	"github.com/gofiber/fiber/v3/middleware/logger"
+	"github.com/gofiber/fiber/v3/middleware/recover"
 )
 
 type Config struct {
@@ -13,6 +15,9 @@ type Config struct {
 }
 
 func Setup(app *fiber.App, config *Config) {
+	app.Use(logger.New(logger.ConfigDefault))
+	app.Use(recover.New(recover.ConfigDefault))
+
 	// Health check
 	app.Get(healthcheck.DefaultLivenessEndpoint, healthcheck.NewHealthChecker())
 

@@ -1,6 +1,6 @@
 [database]
 driver = "sqlite"
-database = "tmp/gungi.db"
+database = "database/gungi.db"
 
 [logger.slog]
 path = "log/slog.log"
