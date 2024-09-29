@@ -17,12 +17,12 @@ type Vector3D struct {
 
 type ReservePosition struct {
 	Color Color
-	Idx   int
+	Idx   uint
 }
 
 type DiscardPosition struct {
 	Color Color
-	Idx   int
+	Idx   uint
 }
 
 func (r ReservePosition) IsOnBoard() bool {
