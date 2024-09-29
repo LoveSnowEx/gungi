@@ -31,7 +31,7 @@ func (b board) Board() [9][9][3]Piece {
 }
 
 func (b board) Get(loc Vector3D) Piece {
-	return b.board[loc.X()][loc.Y()][loc.Z()]
+	return b.board[loc.X][loc.Y][loc.Z]
 }
 
 func (b board) GetLocation(piece Piece) Vector3D {
@@ -39,12 +39,12 @@ func (b board) GetLocation(piece Piece) Vector3D {
 }
 
 func (b *board) Set(loc Vector3D, piece Piece) {
-	b.board[loc.X()][loc.Y()][loc.Z()] = piece
+	b.board[loc.X][loc.Y][loc.Z] = piece
 	b.locations[piece] = loc
 }
 
 func (b *board) Take(piece Piece) {
 	loc := b.locations[piece]
-	b.board[loc.X()][loc.Y()][loc.Z()] = nil
+	b.board[loc.X][loc.Y][loc.Z] = nil
 	delete(b.locations, piece)
 }
