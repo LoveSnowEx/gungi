@@ -19,7 +19,7 @@ func Slog() *slog.Logger {
 		return sloglogger
 	}
 	w := config.Logger.Get("slog")
-	sloglogger = slog.New(slog.NewTextHandler(
+	sloglogger = slog.New(slog.NewJSONHandler(
 		w,
 		&slog.HandlerOptions{
 			AddSource: true,
