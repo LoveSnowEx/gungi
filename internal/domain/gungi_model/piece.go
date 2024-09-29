@@ -1,15 +1,9 @@
 package gungi_model
 
-type PieceType interface {
-	isPieceType()
-}
-
-type pieceType uint
-
-func (t pieceType) isPieceType() {}
+type PieceType uint
 
 const (
-	Marshal           pieceType = iota // 帥
+	Marshal           PieceType = iota // 帥
 	General                            // 大
 	LieutenantGeneral                  // 中
 	MajorGeneral                       // 小
