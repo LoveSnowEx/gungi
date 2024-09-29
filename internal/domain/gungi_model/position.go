@@ -2,6 +2,10 @@ package gungi_model
 
 import "image"
 
+type Position interface {
+	IsOnBoard() bool
+}
+
 type Vector2D struct {
 	image.Point
 }
@@ -9,6 +13,24 @@ type Vector2D struct {
 type Vector3D struct {
 	Vector2D
 	Z int
+}
+
+type ReservePosition struct {
+	Color Color
+	Idx   int
+}
+
+type DiscardPosition struct {
+	Color Color
+	Idx   int
+}
+
+func (r ReservePosition) IsOnBoard() bool {
+	return false
+}
+
+func (d DiscardPosition) IsOnBoard() bool {
+	return false
 }
 
 func NewVector2D(x, y int) Vector2D {
@@ -41,4 +63,8 @@ func (v Vector3D) Sub(w Vector3D) Vector3D {
 
 func (v Vector3D) Eq(w Vector3D) bool {
 	return v.Point.Eq(w.Point) && v.Z == w.Z
+}
+
+func (v Vector3D) IsOnBoard() bool {
+	return true
 }
