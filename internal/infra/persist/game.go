@@ -61,12 +61,12 @@ func (r *gameRepoImpl) Find(id uint) (game gungi_model.Game, err error) {
 	}
 	// Board
 	for _, piecePo := range gamePo.BoardPieces {
-		piece := gungi_model.NewPiece(piecePo.PieceID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
+		piece := gungi_model.NewPiece(po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
 		game.Board().Set(gungi_model.NewVector3D(piecePo.Row, piecePo.Column, 0), piece)
 	}
 	// Reserve
 	for _, piecePo := range gamePo.Reserve {
-		piece := gungi_model.NewPiece(piecePo.PieceID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
+		piece := gungi_model.NewPiece(po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
 		if err = game.Reserve(po.ToColor(piecePo.Color)).Add(piece); err != nil {
 			game = nil
 			return
@@ -74,7 +74,7 @@ func (r *gameRepoImpl) Find(id uint) (game gungi_model.Game, err error) {
 	}
 	// Discard
 	for _, piecePo := range gamePo.Discard {
-		piece := gungi_model.NewPiece(piecePo.PieceID, po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
+		piece := gungi_model.NewPiece(po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
 		if err = game.Discard(po.ToColor(piecePo.Color)).Add(piece); err != nil {
 			game = nil
 			return
@@ -114,10 +114,9 @@ func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
 				if piece := game.Board().Get(gungi_model.NewVector3D(x, y, z)); piece != nil {
 					piecePo := po.BoardPiece{
 						Piece: po.Piece{
-							PieceID: piece.Id(),
-							GameID:  gamePo.ID,
-							Type:    po.FromPieceType(piece.Type()),
-							Color:   po.FromColor(piece.Color()),
+							GameID: gamePo.ID,
+							Type:   po.FromPieceType(piece.Type()),
+							Color:  po.FromColor(piece.Color()),
 						},
 						Row:    x,
 						Column: y,
@@ -146,10 +145,9 @@ func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
 		for _, piece := range game.Reserve(color).Pieces() {
 			piecePo := po.ReservePiece{
 				Piece: po.Piece{
-					PieceID: piece.Id(),
-					GameID:  gamePo.ID,
-					Type:    po.FromPieceType(piece.Type()),
-					Color:   po.FromColor(piece.Color()),
+					GameID: gamePo.ID,
+					Type:   po.FromPieceType(piece.Type()),
+					Color:  po.FromColor(piece.Color()),
 				},
 			}
 			gamePo.Reserve = append(gamePo.Reserve, piecePo)
@@ -158,10 +156,9 @@ func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
 		for _, piece := range game.Discard(color).Pieces() {
 			piecePo := po.DiscardPiece{
 				Piece: po.Piece{
-					PieceID: piece.Id(),
-					GameID:  gamePo.ID,
-					Type:    po.FromPieceType(piece.Type()),
-					Color:   po.FromColor(piece.Color()),
+					GameID: gamePo.ID,
+					Type:   po.FromPieceType(piece.Type()),
+					Color:  po.FromColor(piece.Color()),
 				},
 			}
 			gamePo.Discard = append(gamePo.Discard, piecePo)

@@ -44,15 +44,13 @@ func (g *gameService) Start(game gungi_model.Game, pieceAmounts map[gungi_model.
 		err = gungi_errors.ErrInvalidPlayerAmount
 		return
 	}
-	pieceId := uint(0)
 	for _, color := range gungi_model.Colors() {
 		for pieceType, amount := range pieceAmounts {
 			for i := 0; i < amount; i++ {
-				piece := gungi_model.NewPiece(pieceId, pieceType, color)
+				piece := gungi_model.NewPiece(pieceType, color)
 				if err = game.Reserve(color).Add(piece); err != nil {
 					return
 				}
-				pieceId++
 			}
 		}
 	}
