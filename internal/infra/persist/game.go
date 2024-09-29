@@ -62,7 +62,8 @@ func (r *gameRepoImpl) Find(id uint) (game gungi_model.Game, err error) {
 	// Board
 	for _, piecePo := range gamePo.BoardPieces {
 		piece := gungi_model.NewPiece(po.ToPieceType(piecePo.Type), po.ToColor(piecePo.Color))
-		game.Board().Set(gungi_model.NewVector3D(piecePo.Row, piecePo.Column, 0), piece)
+		_ = piece
+		// TODO: game.Board()[piecePo.Row][piecePo.Column][0] = piece
 	}
 	// Reserve
 	for _, piecePo := range gamePo.Reserve {
@@ -111,7 +112,7 @@ func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
 	for x := range [gungi_model.BoardRows]struct{}{} {
 		for y := range [gungi_model.BoardCols]struct{}{} {
 			for z := range [gungi_model.BoardLevels]struct{}{} {
-				if piece := game.Board().Get(gungi_model.NewVector3D(x, y, z)); piece != nil {
+				if piece := game.Board()[x][y][z]; piece != nil {
 					piecePo := po.BoardPiece{
 						Piece: po.Piece{
 							GameID: gamePo.ID,

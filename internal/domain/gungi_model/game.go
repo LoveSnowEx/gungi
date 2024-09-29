@@ -17,7 +17,7 @@ type Game interface {
 	// SetId sets the id of the game.
 	SetId(id uint)
 	// Board returns the board of the game.
-	Board() Board
+	Board() [BoardRows][BoardCols][BoardLevels]Piece
 	// Reserve returns the reserve of the game.
 	Reserve(color Color) PieceArea
 	// Discard returns the discard area of the game.
@@ -76,8 +76,8 @@ func (g *game) SetId(id uint) {
 	g.id = id
 }
 
-func (g game) Board() Board {
-	return g.board
+func (g game) Board() [BoardRows][BoardCols][BoardLevels]Piece {
+	return g.board.Board()
 }
 
 func (g game) Reserve(color Color) PieceArea {
