@@ -20,7 +20,7 @@ func SetupApi(app *fiber.App) {
 			}),
 		}),
 		GungiController: *gungi_controller.New(&gungi_controller.Config{
-			GungiUsecase: gungi_usecase.New(&gungi_usecase.GameUsecaseConfig{
+			GungiUsecase: gungi_usecase.New(&gungi_usecase.Config{
 				GameService:  gungi_service.NewGameService(),
 				GameRepo:     persist.NewGameRepo(),
 				PlayerRepo:   persist.NewPlayerRepo(),

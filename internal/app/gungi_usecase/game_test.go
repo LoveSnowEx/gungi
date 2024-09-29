@@ -51,8 +51,8 @@ func TestMain(m *testing.M) {
 	teardown()
 }
 
-func NewFakeGameUsecase() GameUsecase {
-	return New(&GameUsecaseConfig{
+func NewFakeGameUsecase() Usecase {
+	return New(&Config{
 		GameService:  gungi_service.NewGameService(),
 		GameRepo:     persist.NewGameRepo(),
 		PlayerRepo:   persist.NewPlayerRepo(),

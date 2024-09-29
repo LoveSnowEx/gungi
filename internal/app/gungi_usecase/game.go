@@ -11,17 +11,17 @@ import (
 )
 
 var (
-	_ GameUsecase = (*gameUsecase)(nil)
+	_ Usecase = (*gameUsecase)(nil)
 )
 
-type GameUsecaseConfig struct {
+type Config struct {
 	GameService  gungi_service.GameService
 	GameRepo     gungi_repo.GameRepo
 	PlayerRepo   gungi_repo.PlayerRepo
 	EventManager event.ManagerFace
 }
 
-type GameUsecase interface {
+type Usecase interface {
 	// CreateGame creates a new game.
 	CreateGame() (gungi_model.Game, error)
 	// FindGame finds a game by id.
@@ -41,7 +41,7 @@ type gameUsecase struct {
 	eventManager event.ManagerFace
 }
 
-func New(config *GameUsecaseConfig) *gameUsecase {
+func New(config *Config) *gameUsecase {
 	return &gameUsecase{
 		gameService:  config.GameService,
 		gameRepo:     config.GameRepo,
