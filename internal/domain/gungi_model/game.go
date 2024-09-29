@@ -2,16 +2,10 @@ package gungi_model
 
 import "github.com/LoveSnowEx/gungi/internal/const/gungi_errors"
 
-type Phase interface {
-	isPhase()
-}
-
-type phase uint
-
-func (p phase) isPhase() {}
+type Phase uint
 
 const (
-	Setup phase = iota
+	Setup Phase = iota
 	Prepare
 	Play
 	End
