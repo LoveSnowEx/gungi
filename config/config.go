@@ -27,7 +27,7 @@ func init() {
 
 	// database
 	viper.SetDefault("database.driver", "sqlite")
-	viper.SetDefault("database.database", "tmp/gungi.db")
+	viper.SetDefault("database.database", "database/gungi.db")
 	if config, err := database.ReadViper(viper.Sub("database")); err != nil {
 		panic(err)
 	} else {
