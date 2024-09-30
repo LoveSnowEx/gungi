@@ -7,9 +7,7 @@ require (
 	github.com/gofiber/fiber/v3 v3.0.0-beta.3
 	github.com/gookit/event v1.1.1
 	github.com/spf13/viper v1.19.0
-	gorm.io/gen v0.3.24
 	gorm.io/gorm v1.25.5
-	gorm.io/plugin/dbresolver v1.5.0
 )
 
 require (
@@ -65,5 +63,7 @@ require (
 	gorm.io/driver/mysql v1.5.1-0.20230509030346-3715c134c25b // indirect
 	gorm.io/driver/postgres v1.4.5 // indirect
 	gorm.io/driver/sqlite v1.5.4 // indirect
+	gorm.io/gen v0.3.24 // indirect
 	gorm.io/hints v1.1.0 // indirect
+	gorm.io/plugin/dbresolver v1.5.0 // indirect
 )
