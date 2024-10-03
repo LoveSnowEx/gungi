@@ -1,3 +1,5 @@
+//go:build ignore
+
 package persist
 
 import (
@@ -23,7 +25,7 @@ type gameRepoImpl struct {
 	playerRepo gungi_repo.PlayerRepo
 }
 
-func NewGameRepo() gungi_repo.GameRepo {
+func NewGameRepo() *gameRepoImpl {
 	return &gameRepoImpl{
 		playerRepo: NewPlayerRepo(),
 	}
@@ -97,31 +99,35 @@ p:
 }
 
 func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
+	db := database.Default().Begin()
+	defer func() {
+		if err != nil {
+			db.Rollback()
+			return
+		}
+		db.Commit()
+	}()
+
 	if game == nil {
 		err = gungi_errors.ErrInvalidGame
 		return
 	}
-	gamePo := po.Game{
-		Players: make([]po.Player, 0),
-		Pieces:  make([]po.Piece, 0),
-		Turn:    game.Turn(),
-		Phase:   game.Phase(),
-	}
-
-	// Setup ID
+	gamePo := po.Game{}
 	if game.Id() != 0 {
 		gamePo.ID = game.Id()
-	} else {
-		if err = database.Default().Save(&gamePo).Error; err != nil {
-			return
-		}
 	}
+	if err = db.Where("id = ?", game.Id()).FirstOrCreate(&gamePo).Error; err != nil {
+		return
+	}
+
+	players := []po.Player{}
+	pieces := []po.Piece{}
 	// Board
 	for x := range [gungi_model.BoardRows]struct{}{} {
 		for y := range [gungi_model.BoardCols]struct{}{} {
 			for z := range [gungi_model.BoardLevels]struct{}{} {
 				if piece := game.Board()[x][y][z]; piece != nil {
-					gamePo.Pieces = append(gamePo.Pieces, po.Piece{
+					pieces = append(pieces, po.Piece{
 						GameID:   gamePo.ID,
 						Type:     piece.Type(),
 						Color:    piece.Color(),
@@ -143,7 +149,7 @@ func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
 				GameID: gamePo.ID,
 				Color:  color,
 			}
-			gamePo.Players = append(gamePo.Players, playerPo)
+			players = append(players, playerPo)
 		}
 		// Reserve
 		for i, piece := range game.Reserve(color) {
@@ -151,7 +157,7 @@ func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
 				continue
 			}
 			position := uint(boardSize+gungi_model.AreaSize*color) + uint(i)
-			gamePo.Pieces = append(gamePo.Pieces, po.Piece{
+			pieces = append(pieces, po.Piece{
 				GameID:   gamePo.ID,
 				Type:     piece.Type(),
 				Color:    piece.Color(),
@@ -164,7 +170,7 @@ func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
 				continue
 			}
 			position := uint(boardSize+gungi_model.AreaSize*2+gungi_model.AreaSize*color) + uint(i)
-			gamePo.Pieces = append(gamePo.Pieces, po.Piece{
+			pieces = append(pieces, po.Piece{
 				GameID:   gamePo.ID,
 				Type:     piece.Type(),
 				Color:    piece.Color(),
@@ -172,8 +178,15 @@ func (r *gameRepoImpl) Save(game gungi_model.Game) (err error) {
 			})
 		}
 	}
-	if err = database.Default().Save(&gamePo).Error; err != nil {
-		return
+	if len(players) != 0 {
+		if err = db.Save(&players).Error; err != nil {
+			return
+		}
+	}
+	if len(pieces) != 0 {
+		if err = db.Save(&pieces).Error; err != nil {
+			return
+		}
 	}
 	game.SetId(gamePo.ID)
 	return

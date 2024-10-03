@@ -32,7 +32,7 @@ type player struct {
 	basePlayer
 }
 
-func NewPlayer(name string) Player {
+func NewPlayer(userId uint, name string) Player {
 	return &player{
 		basePlayer: basePlayer{
 			name: name,

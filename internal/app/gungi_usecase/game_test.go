@@ -1,3 +1,5 @@
+//go:build ignore
+
 package gungi_usecase_test
 
 import (

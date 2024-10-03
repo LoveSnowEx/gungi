@@ -1,28 +1,25 @@
 package bootstrap
 
 import (
-	"github.com/LoveSnowEx/gotool/database/gormtool"
+	"database/sql"
+
 	"github.com/LoveSnowEx/gungi/config"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
-	"github.com/LoveSnowEx/gungi/internal/infra/po"
-	"github.com/LoveSnowEx/gungi/tool/logger"
-	"gorm.io/gorm"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/sqlitedialect"
+	"github.com/uptrace/bun/driver/sqliteshim"
 )
 
 func SetupDB() {
-	db, err := gormtool.Open(config.Database, &gorm.Config{
-		Logger: logger.Gorm(),
-	})
-	if err != nil {
-		panic(err)
+	for connection, config := range config.Database.Connections {
+		switch connection {
+		case "sqlite":
+			sqldb, err := sql.Open(sqliteshim.ShimName, config.Dsn())
+			if err != nil {
+				panic(err)
+			}
+			database.Set(connection, bun.NewDB(sqldb, sqlitedialect.New()))
+		}
 	}
-	if err = db.AutoMigrate(
-		&po.User{},
-		&po.Game{},
-		&po.Player{},
-		&po.Piece{},
-	); err != nil {
-		panic(err)
-	}
-	database.SetDefault(db)
+	database.SetDefault(database.Get(config.Database.DefaultConnection))
 }

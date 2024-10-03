@@ -1,4 +1,7 @@
 [database]
+default = "gungi"
+
+[database.connections.gungi]
 driver = "sqlite"
 database = "database/gungi.db"
 
