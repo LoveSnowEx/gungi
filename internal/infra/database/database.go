@@ -5,15 +5,16 @@ import (
 )
 
 var (
-	connections = make(map[string]*bun.DB)
+	defaultConnection = ""
+	connections       = make(map[string]*bun.DB)
 )
 
-func SetDefault(d *bun.DB) {
-	connections["default"] = d
+func SetDefault(connection string) {
+	defaultConnection = connection
 }
 
 func Default() *bun.DB {
-	return connections["default"]
+	return connections[defaultConnection]
 }
 
 func Set(name string, d *bun.DB) {

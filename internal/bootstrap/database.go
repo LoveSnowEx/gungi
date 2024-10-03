@@ -12,7 +12,7 @@ import (
 
 func SetupDB() {
 	for connection, config := range config.Database.Connections {
-		switch connection {
+		switch config.Driver {
 		case "sqlite":
 			sqldb, err := sql.Open(sqliteshim.ShimName, config.Dsn())
 			if err != nil {
@@ -21,5 +21,5 @@ func SetupDB() {
 			database.Set(connection, bun.NewDB(sqldb, sqlitedialect.New()))
 		}
 	}
-	database.SetDefault(database.Get(config.Database.DefaultConnection))
+	database.SetDefault(config.Database.DefaultConnection)
 }

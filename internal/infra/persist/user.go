@@ -20,10 +20,17 @@ type userRepo struct {
 }
 
 func NewUserRepo(db *bun.DB) *userRepo {
+	_, err := db.NewCreateTable().
+		IfNotExists().
+		Model(&po.User{}).
+		Exec(context.Background())
+	if err != nil {
+		panic(err)
+	}
 	return &userRepo{db}
 }
 
-func (r *userRepo) Find(id uint) (user user_model.User, err error) {
+func (r *userRepo) Find(id uint) (user *user_model.User, err error) {
 	userPo := po.User{}
 	err = r.db.NewSelect().
 		Model(&po.User{}).
@@ -38,7 +45,7 @@ func (r *userRepo) Find(id uint) (user user_model.User, err error) {
 	return
 }
 
-func (r *userRepo) Create(user user_model.User) (id uint, err error) {
+func (r *userRepo) Create(user *user_model.User) (err error) {
 	userPo := po.User{
 		Name: user.Name,
 	}
@@ -48,6 +55,6 @@ func (r *userRepo) Create(user user_model.User) (id uint, err error) {
 	if err != nil {
 		return
 	}
-	id = userPo.ID
+	user.ID = userPo.ID
 	return
 }
