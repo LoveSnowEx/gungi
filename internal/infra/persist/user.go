@@ -46,6 +46,13 @@ func (r *userRepo) Find(id uint) (user *user_model.User, err error) {
 }
 
 func (r *userRepo) Save(user *user_model.User) (err error) {
+	if user.ID == 0 {
+		return r.create(user)
+	}
+	return r.update(user)
+}
+
+func (r *userRepo) create(user *user_model.User) (err error) {
 	userPo := po.User{
 		Name: user.Name,
 	}
@@ -56,5 +63,18 @@ func (r *userRepo) Save(user *user_model.User) (err error) {
 		return
 	}
 	user.ID = userPo.ID
+	return
+}
+
+func (r *userRepo) update(user *user_model.User) (err error) {
+	userPo := po.User{
+		ID:   user.ID,
+		Name: user.Name,
+	}
+	_, err = r.db.NewUpdate().
+		Model(&userPo).
+		WherePK().
+		Set("name = ?", user.Name).
+		Exec(context.Background())
 	return
 }
