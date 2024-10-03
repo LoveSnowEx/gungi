@@ -32,6 +32,6 @@ func (u *usecase) Find(id uint) (user *user_model.User, err error) {
 
 func (u *usecase) Create(name string) (user *user_model.User, err error) {
 	user = user_model.NewUser(name)
-	err = u.userRepo.Create(user)
+	err = u.userRepo.Save(user)
 	return
 }

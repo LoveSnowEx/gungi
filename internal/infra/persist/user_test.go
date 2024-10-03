@@ -41,7 +41,7 @@ func (s *UserSuite) TearDownSuite() {
 func (s *UserSuite) TestCreate() {
 	repo := persist.NewUserRepo(s.db)
 	user := user_model.NewUser("test")
-	err := repo.Create(user)
+	err := repo.Save(user)
 	if !s.NoError(err) {
 		return
 	}
@@ -49,6 +49,7 @@ func (s *UserSuite) TestCreate() {
 		return
 	}
 	s.Equal(user.Name, "test")
+
 }
 
 func TestExampleSuite(t *testing.T) {

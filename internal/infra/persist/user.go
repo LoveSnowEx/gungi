@@ -45,7 +45,7 @@ func (r *userRepo) Find(id uint) (user *user_model.User, err error) {
 	return
 }
 
-func (r *userRepo) Create(user *user_model.User) (err error) {
+func (r *userRepo) Save(user *user_model.User) (err error) {
 	userPo := po.User{
 		Name: user.Name,
 	}
