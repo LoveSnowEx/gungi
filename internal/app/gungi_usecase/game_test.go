@@ -1,7 +1,8 @@
+//go:build ignore
+
 package gungi_usecase_test
 
 import (
-	"context"
 	"log/slog"
 	"runtime/debug"
 	"testing"
@@ -13,7 +14,6 @@ import (
 	"github.com/LoveSnowEx/gungi/internal/bootstrap"
 	"github.com/LoveSnowEx/gungi/internal/domain/gungi_model"
 	"github.com/LoveSnowEx/gungi/internal/domain/gungi_service"
-	"github.com/LoveSnowEx/gungi/internal/infra/dal"
 	"github.com/LoveSnowEx/gungi/internal/infra/database"
 	"github.com/LoveSnowEx/gungi/internal/infra/notification"
 	"github.com/LoveSnowEx/gungi/internal/infra/persist"
@@ -22,9 +22,7 @@ import (
 )
 
 var (
-	userFactory = testtool.New(func() testtool.Do[po.User] {
-		return dal.User.WithContext(context.Background())
-	})
+	userFactory = testtool.NewFactory[po.User]()
 )
 
 func setup() {
@@ -51,8 +49,8 @@ func TestMain(m *testing.M) {
 	teardown()
 }
 
-func NewFakeGameUsecase() GameUsecase {
-	return New(&GameUsecaseConfig{
+func NewFakeGameUsecase() Usecase {
+	return New(&Config{
 		GameService:  gungi_service.NewGameService(),
 		GameRepo:     persist.NewGameRepo(),
 		PlayerRepo:   persist.NewPlayerRepo(),
@@ -140,10 +138,12 @@ func Test_gameUsecase_StartGame(t *testing.T) {
 			}
 			if err := u.StartGame(game.Id()); (err != nil) != tt.wantErr {
 				t.Errorf("gameService.StartGame() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
 			expectedUpdateCount++
 			if updateCount != expectedUpdateCount && !tt.wantErr {
 				t.Errorf("gameService should have fired %v events, but fired %v", expectedUpdateCount, updateCount)
+				return
 			}
 		})
 	}

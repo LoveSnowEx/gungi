@@ -1,31 +1,17 @@
 package gungi_model
 
-type Color interface {
-	isColor()
-	Other() Color
-}
-
-type color uint
+type Color uint
 
 const (
-	White color = iota
-	Black
+	Black Color = iota
+	White
 )
 
-func (c color) isColor() {}
-
-func (c color) Other() Color {
-	switch c {
-	case White:
-		return Black
-	case Black:
-		return White
-	default:
-		panic("invalid color")
-	}
+func (c Color) Opposite() Color {
+	return c ^ 1
 }
 
-// Colors returns the colors of the game.
+// Colors returns a slice of all possible colors.
 func Colors() []Color {
-	return []Color{White, Black}
+	return []Color{Black, White}
 }

@@ -1,51 +1,31 @@
 package gungi_model
 
-import (
-	"github.com/LoveSnowEx/gungi/internal/const/gungi_errors"
-	"k8s.io/apimachinery/pkg/util/sets"
-)
+const AreaSize = 25
 
 type PieceArea interface {
-	// Add adds a piece to the area.
-	Add(piece Piece) error
-	// Remove removes a piece from the area.
-	Remove(piece Piece) error
-	// Contains returns whether the area contains the piece.
-	Contains(piece Piece) bool
-	// Pieces returns the pieces in the area.
-	Pieces() []Piece
+	Area() [AreaSize]Piece
+	Get(idx uint) Piece
+	Set(idx uint, piece Piece)
 }
 
 type pieceArea struct {
-	pieces sets.Set[Piece]
+	pieces [AreaSize]Piece
 }
 
-func NewPieceArea() PieceArea {
+func NewPieceArea() *pieceArea {
 	return &pieceArea{
-		sets.New[Piece](),
+		pieces: [AreaSize]Piece{},
 	}
 }
 
-func (a *pieceArea) Add(piece Piece) (err error) {
-	if a.Contains(piece) {
-		return gungi_errors.ErrPieceAlreadyExists
-	}
-	a.pieces.Insert(piece)
-	return
+func (pa pieceArea) Area() [AreaSize]Piece {
+	return pa.pieces
 }
 
-func (a *pieceArea) Remove(piece Piece) (err error) {
-	if !a.Contains(piece) {
-		return gungi_errors.ErrPieceNotFound
-	}
-	a.pieces.Delete(piece)
-	return
+func (pa pieceArea) Get(idx uint) Piece {
+	return pa.pieces[idx]
 }
 
-func (a *pieceArea) Contains(piece Piece) bool {
-	return a.pieces.Has(piece)
-}
-
-func (a *pieceArea) Pieces() []Piece {
-	return a.pieces.UnsortedList()
+func (pa *pieceArea) Set(idx uint, piece Piece) {
+	pa.pieces[idx] = piece
 }

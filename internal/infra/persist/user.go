@@ -6,7 +6,8 @@ import (
 	"github.com/LoveSnowEx/gungi/internal/const/user_errors"
 	"github.com/LoveSnowEx/gungi/internal/domain/user_model"
 	"github.com/LoveSnowEx/gungi/internal/domain/user_repo"
-	"github.com/LoveSnowEx/gungi/internal/infra/dal"
+	"github.com/uptrace/bun"
+
 	"github.com/LoveSnowEx/gungi/internal/infra/po"
 )
 
@@ -15,15 +16,26 @@ var (
 )
 
 type userRepo struct {
+	db *bun.DB
 }
 
-func NewUserRepo() *userRepo {
-	return &userRepo{}
+func NewUserRepo(db *bun.DB) *userRepo {
+	_, err := db.NewCreateTable().
+		IfNotExists().
+		Model(&po.User{}).
+		Exec(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	return &userRepo{db}
 }
 
-func (r *userRepo) Find(id uint) (user user_model.User, err error) {
-	u := dal.User
-	userPo, err := u.WithContext(context.Background()).Where(u.ID.Eq(id)).First()
+func (r *userRepo) Find(id uint) (user *user_model.User, err error) {
+	userPo := po.User{}
+	err = r.db.NewSelect().
+		Model(&po.User{}).
+		Where("id = ?", id).
+		Scan(context.Background())
 	if err != nil {
 		err = user_errors.ErrUserNotFound
 		return
@@ -33,15 +45,36 @@ func (r *userRepo) Find(id uint) (user user_model.User, err error) {
 	return
 }
 
-func (r *userRepo) Create(user user_model.User) (id uint, err error) {
+func (r *userRepo) Save(user *user_model.User) (err error) {
+	if user.ID == 0 {
+		return r.create(user)
+	}
+	return r.update(user)
+}
+
+func (r *userRepo) create(user *user_model.User) (err error) {
 	userPo := po.User{
 		Name: user.Name,
 	}
-	u := dal.User
-	err = u.WithContext(context.Background()).Create(&userPo)
+	_, err = r.db.NewInsert().
+		Model(&userPo).
+		Exec(context.Background())
 	if err != nil {
 		return
 	}
-	id = userPo.ID
+	user.ID = userPo.ID
+	return
+}
+
+func (r *userRepo) update(user *user_model.User) (err error) {
+	userPo := po.User{
+		ID:   user.ID,
+		Name: user.Name,
+	}
+	_, err = r.db.NewUpdate().
+		Model(&userPo).
+		WherePK().
+		Set("name = ?", user.Name).
+		Exec(context.Background())
 	return
 }

@@ -2,12 +2,19 @@ package gungi_controller
 
 import "github.com/LoveSnowEx/gungi/internal/app/gungi_usecase"
 
-type Controller struct {
-	gungiUsecase gungi_usecase.GameUsecase
+type Config struct {
+	GungiUsecase gungi_usecase.Usecase
 }
 
-func New(gungiUsecase gungi_usecase.GameUsecase) *Controller {
-	return &Controller{
-		gungiUsecase: gungiUsecase,
+type Controller interface {
+}
+
+type controller struct {
+	gungiUsecase gungi_usecase.Usecase
+}
+
+func New(config *Config) *controller {
+	return &controller{
+		gungiUsecase: config.GungiUsecase,
 	}
 }

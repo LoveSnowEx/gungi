@@ -1,15 +1,9 @@
 package gungi_model
 
-type PieceType interface {
-	isPieceType()
-}
-
-type pieceType uint
-
-func (t pieceType) isPieceType() {}
+type PieceType uint
 
 const (
-	Marshal           pieceType = iota // 帥
+	Marshal           PieceType = iota // 帥
 	General                            // 大
 	LieutenantGeneral                  // 中
 	MajorGeneral                       // 小
@@ -45,8 +39,6 @@ func PieceTypes() []PieceType {
 }
 
 type Piece interface {
-	// Id returns the id of the piece.
-	Id() uint
 	// Type returns the type of the piece.
 	Type() PieceType
 	// Color returns the color of the piece.
@@ -54,13 +46,8 @@ type Piece interface {
 }
 
 type piece struct {
-	id        uint
 	pieceType PieceType
 	color     Color
-}
-
-func (p piece) Id() uint {
-	return p.id
 }
 
 func (p piece) Type() PieceType {
@@ -71,9 +58,8 @@ func (p piece) Color() Color {
 	return p.color
 }
 
-func NewPiece(id uint, pieceType PieceType, color Color) Piece {
+func NewPiece(pieceType PieceType, color Color) Piece {
 	return &piece{
-		id:        id,
 		pieceType: pieceType,
 		color:     color,
 	}

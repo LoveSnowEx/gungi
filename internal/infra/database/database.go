@@ -1,25 +1,26 @@
 package database
 
 import (
-	"gorm.io/gorm"
+	"github.com/uptrace/bun"
 )
 
 var (
-	connections = make(map[string]*gorm.DB)
+	defaultConnection = ""
+	connections       = make(map[string]*bun.DB)
 )
 
-func SetDefault(d *gorm.DB) {
-	connections["default"] = d
+func SetDefault(connection string) {
+	defaultConnection = connection
 }
 
-func Default() *gorm.DB {
-	return connections["default"]
+func Default() *bun.DB {
+	return connections[defaultConnection]
 }
 
-func Set(name string, d *gorm.DB) {
+func Set(name string, d *bun.DB) {
 	connections[name] = d
 }
 
-func Get(name string) *gorm.DB {
+func Get(name string) *bun.DB {
 	return connections[name]
 }

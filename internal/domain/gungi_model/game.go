@@ -2,20 +2,16 @@ package gungi_model
 
 import "github.com/LoveSnowEx/gungi/internal/const/gungi_errors"
 
-type Phase interface {
-	isPhase()
-}
-
-type phase uint
-
-func (p phase) isPhase() {}
+type Phase uint
 
 const (
-	Setup phase = iota
+	Setup Phase = iota
 	Prepare
 	Play
 	End
 )
+
+var _ Game = (*game)(nil)
 
 type Game interface {
 	// Id returns the id of the game.
@@ -23,21 +19,27 @@ type Game interface {
 	// SetId sets the id of the game.
 	SetId(id uint)
 	// Board returns the board of the game.
-	Board() Board
+	Board() [BoardRows][BoardCols][BoardLevels]Piece
 	// Reserve returns the reserve of the game.
-	Reserve(color Color) PieceArea
+	Reserve(color Color) [AreaSize]Piece
 	// Discard returns the discard area of the game.
-	Discard(color Color) PieceArea
+	Discard(color Color) [AreaSize]Piece
 	// Player returns the player of the game.
 	Player(color Color) Player
+	// SetBoard sets the board of the game.
+	SetBoard(b Board)
+	// SetReserve sets the reserve of the game.
+	SetReserve(color Color, r PieceArea)
+	// SetDiscard sets the discard area of the game.
+	SetDiscard(color Color, d PieceArea)
 	// Join adds a player to the game.
 	Join(color Color, player Player) error
 	// Leave removes a player from the game.
 	Leave(player Player) error
-	// CurrentTurn returns the color of the player whose turn it is.
-	CurrentTurn() Color
-	// SetCurrentTurn sets the color of the player whose turn it is.
-	SetCurrentTurn(color Color)
+	// Turn returns the color of the player whose turn it is.
+	Turn() Color
+	// SetTurn sets the color of the player whose turn it is.
+	SetTurn(color Color)
 	// Phase returns the current phase of the game.
 	Phase() Phase
 	// SetPhase sets the current phase of the game.
@@ -54,8 +56,8 @@ type game struct {
 	phase       Phase
 }
 
-func NewGame() (g Game) {
-	g = &game{
+func NewGame() *game {
+	return &game{
 		board: NewBoard(),
 		reserve: map[Color]PieceArea{
 			White: NewPieceArea(),
@@ -72,7 +74,6 @@ func NewGame() (g Game) {
 		currentTurn: White,
 		phase:       Setup,
 	}
-	return
 }
 
 func (g game) Id() uint {
@@ -83,16 +84,16 @@ func (g *game) SetId(id uint) {
 	g.id = id
 }
 
-func (g game) Board() Board {
-	return g.board
+func (g game) Board() [BoardRows][BoardCols][BoardLevels]Piece {
+	return g.board.Board()
 }
 
-func (g game) Reserve(color Color) PieceArea {
-	return g.reserve[color]
+func (g game) Reserve(color Color) [AreaSize]Piece {
+	return g.reserve[color].Area()
 }
 
-func (g game) Discard(color Color) PieceArea {
-	return g.discard[color]
+func (g game) Discard(color Color) [AreaSize]Piece {
+	return g.discard[color].Area()
 }
 
 func (g game) Player(color Color) Player {
@@ -101,6 +102,26 @@ func (g game) Player(color Color) Player {
 		return nil
 	}
 	return player
+}
+
+func (g *game) SetBoard(b Board) {
+	g.board = b
+}
+
+func (g *game) SetReserve(color Color, r PieceArea) {
+	g.reserve[color] = r
+}
+
+func (g *game) SetDiscard(color Color, d PieceArea) {
+	g.discard[color] = d
+}
+
+func (g *game) PutDiscardPieces(discardPieces map[Color][AreaSize]Piece) {
+	for color, pieces := range discardPieces {
+		for idx, piece := range pieces {
+			g.discard[color].Set(uint(idx), piece)
+		}
+	}
 }
 
 func (g *game) Join(color Color, player Player) (err error) {
@@ -129,18 +150,18 @@ func (g *game) Leave(player Player) (err error) {
 	return
 }
 
-func (g *game) SetCurrentTurn(color Color) {
-	g.currentTurn = color
-}
-
-func (g game) CurrentTurn() Color {
+func (g game) Turn() Color {
 	return g.currentTurn
 }
 
-func (g *game) SetPhase(phase Phase) {
-	g.phase = phase
+func (g *game) SetTurn(color Color) {
+	g.currentTurn = color
 }
 
 func (g game) Phase() Phase {
 	return g.phase
+}
+
+func (g *game) SetPhase(phase Phase) {
+	g.phase = phase
 }
